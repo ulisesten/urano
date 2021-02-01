@@ -1,0 +1,10 @@
+#include <stdio.h>
+#include "my_header.h"
+
+int main(){
+
+    inprime();
+    
+
+    return 0;
+}

@@ -1,0 +1,32 @@
+textview#text {
+    background-color: #000;
+    color: #fff;
+}
+
+
+
+textview#side_view {
+    background-color: #21252b;
+    color: #fff;
+}
+
+layout {
+    background-color: #000;
+}
+
+text {
+    color: #fff;
+}
+
+treeview {
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-right-color: #000;
+    padding: 0px;
+}
+
+label {
+    margin-left: 2px;
+}
+
+
