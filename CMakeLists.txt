@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.1)
 
 
 #set project name
-project(geditor)
+project(ram)
 
 #create a src variable with a link to all cpp files to compile
 set(SRC
@@ -31,10 +31,10 @@ link_directories(${VTE_LIBRARY_DIRS})
 add_definitions(${VTE_CFLAGS_OTHER})
 
 
-add_executable(geditor ${SRC})
+add_executable(ram ${SRC})
 
 #link .h files
-target_include_directories(geditor
+target_include_directories(ram
     PRIVATE
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/glade
@@ -43,5 +43,5 @@ target_include_directories(geditor
 )
 
 #link libs
-    target_link_libraries(geditor ${GTK3_LIBRARIES})
-    target_link_libraries(geditor ${VTE_LIBRARIES})
+    target_link_libraries(ram ${GTK3_LIBRARIES})
+    target_link_libraries(ram ${VTE_LIBRARIES})

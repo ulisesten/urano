@@ -7,27 +7,21 @@ GtkTreeSelection* create_file_explorer(GtkBuilder* builder){
     GError *error = NULL;
     file_browser fb;
 
-
-    fb.tree_view         = GTK_TREE_VIEW(gtk_builder_get_object(builder, "tree_view"));
-    fb.selection         = gtk_tree_view_get_selection(GTK_TREE_VIEW(fb.tree_view));
-    fb.column0           = gtk_tree_view_column_new();
-
+    fb.tree_view  = GTK_TREE_VIEW(gtk_builder_get_object(builder, "tree_view"));
+    fb.selection  = gtk_tree_view_get_selection (GTK_TREE_VIEW(fb.tree_view));
+    fb.column0    = gtk_tree_view_column_new    ();
 
     fb.renderer   = gtk_cell_renderer_pixbuf_new();
-    gtk_tree_view_column_pack_start(fb.column0, fb.renderer, FALSE);
-    gtk_tree_view_column_set_attributes(fb.column0, fb.renderer,
-                                        "pixbuf", COLUMN_PIXBUF,
-                                        NULL);
+    gtk_tree_view_column_pack_start             (fb.column0, fb.renderer, FALSE);
+    gtk_tree_view_column_set_attributes         (fb.column0, fb.renderer, "pixbuf", COLUMN_PIXBUF, NULL);
     
-    fb.renderer   = gtk_cell_renderer_text_new() ;
-    gtk_tree_view_column_pack_start(fb.column0, fb.renderer, TRUE);
-    gtk_tree_view_column_set_attributes(fb.column0, fb.renderer,
-                                        "text", COLUMN_STRING,
-                                        NULL);
+    fb.renderer   = gtk_cell_renderer_text_new  ();
+    gtk_tree_view_column_pack_start             (fb.column0, fb.renderer, TRUE);
+    gtk_tree_view_column_set_attributes         (fb.column0, fb.renderer, "text", COLUMN_STRING, NULL);
 
 
-    fb.pixbuf            = gdk_pixbuf_new_from_file("../assets/folder2_32.png", &error);
-    fb.pixbuf_text       = gdk_pixbuf_new_from_file("../assets/text3_32.png", &error);
+    fb.pixbuf_folder            = gdk_pixbuf_new_from_file("../assets/folder2_32.png", &error);
+    fb.pixbuf_text_file         = gdk_pixbuf_new_from_file("../assets/text3_32.png"  , &error);
 
     if (error)
     {
@@ -35,11 +29,12 @@ GtkTreeSelection* create_file_explorer(GtkBuilder* builder){
         g_error_free(error);
     }
 
-    fb.list_store = gtk_list_store_new( 2, GDK_TYPE_PIXBUF, G_TYPE_STRING );
+    fb.tree_store = gtk_tree_store_new( 2, GDK_TYPE_PIXBUF, G_TYPE_STRING );
 
     setup_file_explorer(NULL, fb);
     
-    g_object_unref(fb.pixbuf);
+    g_object_unref(fb.pixbuf_folder);
+    g_object_unref(fb.pixbuf_text_file);
 
     return (fb.selection);
 
@@ -47,80 +42,97 @@ GtkTreeSelection* create_file_explorer(GtkBuilder* builder){
 
 void setup_file_explorer(GtkTreeViewColumn* column, file_browser fBrowser){
     
-    GDir* dir_contents;
+    //GDir* dir_contents;
     GError* gerr;
     gint pos = 0;
-    GtkTreeIter iter;
+    GtkTreeIter iter, iter_child;
     gchar* folder_name;
-    gchar* cwd = g_get_current_dir();
+    char* cwd = g_get_current_dir();
+    PATH paths = NULL;
+    int list_err = -1;
 
     printf("cwd %s\n", cwd);
 
-    dir_contents = g_dir_open(cwd, 0, &gerr);
-
-    folder_name = get_project_folder_name(cwd);
+    //traverse(cwd, 0);
     
+    list_err = filling_list(&paths, cwd);
+    if(list_err < 0 )
+        printf("error al llenar lista.\n");
+
+    walkList(paths);
+
+    folder_name = g_path_get_basename(cwd);
     gtk_tree_view_column_set_title(fBrowser.column0, folder_name);
 
-    walk_dir(dir_contents, &iter, fBrowser);
+    initialize_tree_store(&fBrowser, &iter);
+    fill_tree_store(paths, &iter, NULL, fBrowser, 0);
     
     set_tree_view(fBrowser);
 
-    g_free(dir_contents);
 }
 
 
 void set_tree_view(file_browser fb){
                                                      
-    //g_object_set (fb.renderer, "xalign", 0.0, NULL);
+    gtk_tree_view_set_model(fb.tree_view, GTK_TREE_MODEL( fb.tree_store ));
     gtk_tree_view_append_column(fb.tree_view, fb.column0);
-    gtk_tree_view_set_model(fb.tree_view, GTK_TREE_MODEL( fb.list_store ));
-    //GtkTreeViewColumn* exp_col = gtk_tree_view_column_new();
-    //gtk_tree_view_set_expander_column (fb.tree_view, exp_col);
     
 }
 
 
-void walk_dir(GDir* contents, GtkTreeIter* iter, file_browser fb){
+void initialize_tree_store(  file_browser* fb, GtkTreeIter * iter){
+    gtk_tree_store_append(fb->tree_store, &(*iter), NULL);
+}
 
-    gchar* dir = (char*)g_dir_read_name(contents);
-    struct stat sb;
 
-    if(dir){
-        //printf("%s\n", dir);
-        gtk_list_store_append(fb.list_store, iter);
+void fill_tree_store(PATH paths, GtkTreeIter* iter, GtkTreeIter* parent, file_browser fb, int indent){
 
-        if(stat(dir, &sb) == 0 && S_ISDIR(sb.st_mode)){
-        //if(g_file_test(dir, G_FILE_TEST_IS_DIR)){
+    GtkTreeIter new_iter;
+        
+    while(paths){
 
-            gtk_list_store_set (fb.list_store, iter, COLUMN_PIXBUF, fb.pixbuf, COLUMN_STRING, dir, -1);
+        if(paths->type == FOLDER_TYPE){
 
-            GDir* new_dir_contents;
-            GtkTreeIter iter_child;
-            gchar* next_dir;
-            GError* gerr = NULL;
-            
-            next_dir = g_strconcat(g_get_current_dir(), "/", dir, NULL);
-            //printf("%s\n", dir);
-            
-            new_dir_contents = g_dir_open(next_dir, 0, &gerr);
-            if(gerr != NULL){
-                fprintf(stderr, "gerror %s.\n", gerr->message);
-                g_error_free(gerr);
+            gtk_tree_store_set (fb.tree_store, iter, COLUMN_PIXBUF, fb.pixbuf_folder, COLUMN_STRING, paths->dir, -1);
+
+            bool branched = false;
+            if( paths->branch ) {
+                printf("branch in %s\n", paths->dir);
+                gtk_tree_store_append(fb.tree_store, &new_iter, iter);
+                branched = true;
+                fill_tree_store( paths->branch , &new_iter, iter, fb, indent+1);
+
+            } //else
+             
+            if(paths->next)
+            if(parent)
+                gtk_tree_store_append(fb.tree_store, iter, parent);
+            else
+                gtk_tree_store_append(fb.tree_store, iter, NULL);
+
+            if (branched)
+            {
+                //fill_tree_store( paths->branch , &new_iter , iter, fb, indent+1);
             }
-
-            walk_dir(new_dir_contents, &iter_child, fb);
-            g_free(new_dir_contents);
-            g_free(next_dir);
+            
 
         } else {
+            
+            gtk_tree_store_set (fb.tree_store, iter, COLUMN_PIXBUF, fb.pixbuf_text_file, COLUMN_STRING, paths->dir, -1);
 
-            gtk_list_store_set (fb.list_store, iter, COLUMN_PIXBUF, fb.pixbuf_text, COLUMN_STRING, dir, -1);
 
+            if(paths->next)
+                if(parent)
+                    gtk_tree_store_append(fb.tree_store, iter, parent);
+                else
+                    gtk_tree_store_append(fb.tree_store, iter, NULL);
+            
         }
+
+        //if(paths->next)
+            //gtk_tree_store_append(fb.tree_store, &(*parent), NULL);
+        paths = paths->next;
         
-        
-        walk_dir(contents, iter, fb);
 
     }
 
@@ -128,17 +140,10 @@ void walk_dir(GDir* contents, GtkTreeIter* iter, file_browser fb){
 
 
 gboolean
-  view_selection_func (GtkTreeSelection *selection,
-                       GtkTreeModel     *model,
-                       GtkTreePath      *path,
-                       gboolean          path_currently_selected,
-                       gpointer          userdata) {
+  view_selection_func (GtkTreeSelection *selection, GtkTreeModel *model, GtkTreePath *path, gboolean path_currently_selected, gpointer userdata) {
 
     GtkTreeIter iter;
     GtkWidget* notebook = (GtkWidget*) userdata;
-
-    
-    bool toggle = false;
 
     if (gtk_tree_model_get_iter(model, &iter, path))
     {
@@ -148,16 +153,8 @@ gboolean
 
         if (!path_currently_selected) {
 
-            toggle = true;
-
-        } else {
-
-            toggle = false;
-        }
-
-        if(toggle){
-        
-            set_notebook(notebook, name);
+            gint pos = gtk_notebook_get_n_pages ((GtkNotebook *)notebook);
+            set_notebook(notebook, name, pos);
 
         }
     
@@ -165,41 +162,51 @@ gboolean
 
     }
 
-    
-    return TRUE; /* allow selection state to change */
-
-  }
-
-
-gchar* get_project_folder_name(gchar* path){
-    gchar** elements = g_strsplit (path, "/", -1);
-
-    gchar* folder_name = elements[sizeof(elements)];
-
-    return folder_name;
+    return TRUE;
 }
 
 
-void sorting_files(GDir* contents, PATH* sorted_files, gchar* aux){
 
-    gchar* dir = (char*)g_dir_read_name(contents);
+/**To be erased*/
+void walk_dir(PATH paths, GtkTreeIter* iter, file_browser fb){
 
-    if (dir) {
+    //gchar* dir = (char*)g_dir_read_name(contents);
+    //struct stat sb;
 
-        sorted_files->dir = dir;
+    if(paths){
 
-        if(g_file_test(dir, G_FILE_TEST_IS_DIR)){
+        gtk_list_store_append(fb.list_store, iter);
 
-            sorted_files->type = FOLDER_TYPE;
+        if(paths->type == FOLDER_TYPE){
 
+            gtk_list_store_set (fb.list_store, iter, COLUMN_PIXBUF, fb.pixbuf_folder, COLUMN_STRING, paths->dir, -1);
+            walk_dir(paths->next, iter, fb);
+
+            GDir* new_dir_contents;
+            GtkTreeIter iter_child;
+            gchar* next_dir;
+            GError* gerr;
+
+            new_dir_contents = g_dir_open( g_strconcat( g_get_current_dir(),"/",paths->dir,"/", NULL), 0, &gerr);
+
+            next_dir = (gchar*)g_dir_read_name(new_dir_contents);
+
+            if(next_dir) {
+                PATH new_path_list = NULL;
+                //fillingList(&new_path_list, new_dir_contents, "");
+                walkList(new_path_list);
+                walk_dir(new_path_list, &iter_child, fb);
+            }
+            
         } else {
 
-            sorted_files->type = FILE_TYPE;
+            gtk_list_store_set (fb.list_store, iter, COLUMN_PIXBUF, fb.pixbuf_text_file, COLUMN_STRING, paths->dir, -1);
+            walk_dir(paths->next, iter, fb);
 
         }
-
     }
 
 }
+
 
 

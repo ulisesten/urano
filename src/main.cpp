@@ -60,7 +60,6 @@ int main( int argc, char** argv ){
 
     gtk_style_context_add_provider_for_screen(gdk_display_get_default_screen(display), GTK_STYLE_PROVIDER( css_provider ), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
     
-
     g_object_unref(css_provider);
 
     window            = GTK_WIDGET(gtk_builder_get_object(builder, "window"              ));
@@ -71,10 +70,8 @@ int main( int argc, char** argv ){
     terminal_container= GTK_WIDGET(gtk_builder_get_object(builder, "terminal_container"  ));
     sidebar_button    = GTK_WIDGET(gtk_builder_get_object(builder, "sidebarbutton"       ));
     sidebar           = GTK_WIDGET(gtk_builder_get_object(builder, "sidebar_revealer"    ));
-    notebook_container       = GTK_WIDGET(gtk_builder_get_object(builder, "notebook_container"    ));
+    notebook_container= GTK_WIDGET(gtk_builder_get_object(builder, "notebook_container"  ));
 
-
-    //stack             = GTK_WIDGET(gtk_builder_get_object(builder, "notebook"           ));
     notebook = gtk_notebook_new();
 
     /**SIGNALS*/
@@ -87,17 +84,15 @@ int main( int argc, char** argv ){
     create_terminal(terminal_container);
     GtkTreeSelection* selection = create_file_explorer(builder);
     
-    
-    gtk_widget_show(notebook);
-    
     gtk_tree_selection_set_select_function(selection, view_selection_func, notebook, NULL);
 
     gtk_builder_connect_signals(builder, NULL);
 
     gtk_container_add(GTK_CONTAINER(notebook_container), notebook);
 
-    g_object_unref(builder);
+    gtk_widget_show(notebook);
     gtk_widget_show(window);
+    g_object_unref(builder);
     gtk_main();
 
     return 0;

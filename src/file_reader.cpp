@@ -43,7 +43,8 @@ void open_file(GtkWidget* stack, char* file_name){
 
 }
 
-void set_notebook(GtkWidget* notebook, char* file_name){
+/**page position unused*/
+void set_notebook(GtkWidget* notebook, char* file_name, gint page_position){
 
     GtkWidget* scrolled;
     GtkWidget* view;
@@ -52,6 +53,7 @@ void set_notebook(GtkWidget* notebook, char* file_name){
     gchar*     contents;
     gsize      length;
     GFile*     file;
+    
 
     file = g_file_new_for_path(file_name);
     basename = g_file_get_basename(file);
@@ -68,24 +70,31 @@ void set_notebook(GtkWidget* notebook, char* file_name){
     gtk_widget_show(view);
 
     gtk_container_add(GTK_CONTAINER(scrolled), view);
-    //gtk_stack_add_titled(GTK_STACK(stack),scrolled, basename, basename);
 
-    label = gtk_label_new(basename);
-    gint res = gtk_notebook_append_page (GTK_NOTEBOOK(notebook), scrolled, label);
-    if(res < 0){
-        g_printf("notebook fails.\n");
-    }
+    int is_added = gtk_notebook_page_num((GtkNotebook*)notebook, scrolled);
 
-    if (g_file_load_contents (file, NULL, &contents, &length, NULL, NULL))
+    if(is_added < 0)
     {
-      GtkTextBuffer *buffer;
+        
+        label = gtk_label_new(basename);
+        gint res = gtk_notebook_append_page (GTK_NOTEBOOK(notebook), scrolled, label);
+        if(res < 0){
+            g_printf("notebook fails.\n");
+        }
 
-      buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-      gtk_text_buffer_set_text (buffer, contents, length);
-      g_free (contents);
+        gtk_notebook_set_current_page ((GtkNotebook *)notebook, is_added);
+
+        if (g_file_load_contents (file, NULL, &contents, &length, NULL, NULL))
+        {
+          GtkTextBuffer *buffer;
+
+          buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+          gtk_text_buffer_set_text (buffer, contents, length);
+          g_free (contents);
+
+        }
     }
     
-
     g_free (basename);
 
 }
