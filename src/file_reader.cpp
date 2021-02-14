@@ -76,7 +76,7 @@ void set_notebook(GtkWidget* notebook, char* file_name, gint page_position){
     if(is_added < 0)
     {
         
-        label = gtk_label_new(basename);
+        label = create_tab(basename);
         gint res = gtk_notebook_append_page (GTK_NOTEBOOK(notebook), scrolled, label);
         if(res < 0){
             g_printf("notebook fails.\n");
@@ -96,5 +96,24 @@ void set_notebook(GtkWidget* notebook, char* file_name, gint page_position){
     }
     
     g_free (basename);
+
+}
+
+GtkWidget* create_tab(const gchar* title){
+    GtkWidget* box, *title_label, *close_label;
+
+    close_label = gtk_button_new_from_icon_name ("window-close-symbolic", GTK_ICON_SIZE_MENU);
+    title_label = gtk_label_new(title);
+    box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
+
+    gtk_widget_show(close_label);
+    gtk_widget_show(title_label);
+
+    gtk_container_add((GtkContainer*)box, title_label);
+    gtk_container_add((GtkContainer*)box, close_label);
+
+    gtk_widget_show(box);
+
+    return box;
 
 }

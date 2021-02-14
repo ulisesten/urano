@@ -34,11 +34,10 @@ enum {
 
 void sorting_files(PATH* paths, GDir* contents, gchar* cwd);
 void push(gchar* directory, PATH* sorted_files, gchar* aux);
-int filling_list(PATH* paths, char* file_name);
-int test_list(PATH* paths, GDir* contents, gchar* dir_component);
+int  filling_list(PATH* paths, char* file_name);
 int  insertionSorted(PATH* node, gchar* data, int type);
 int  createNode(PATH *p, gchar* dato, gint type);
-void walkList(PATH p);
+void walkList(PATH p, char* fn);
 
 void traverse(char *fn, int indent);
 

@@ -6,6 +6,7 @@
 GtkTreeSelection* create_file_explorer(GtkBuilder* builder){
     GError *error = NULL;
     file_browser fb;
+    GtkIconTheme *icon_theme;
 
     fb.tree_view  = GTK_TREE_VIEW(gtk_builder_get_object(builder, "tree_view"));
     fb.selection  = gtk_tree_view_get_selection (GTK_TREE_VIEW(fb.tree_view));
@@ -20,13 +21,15 @@ GtkTreeSelection* create_file_explorer(GtkBuilder* builder){
     gtk_tree_view_column_set_attributes         (fb.column0, fb.renderer, "text", COLUMN_STRING, NULL);
 
 
-    fb.pixbuf_folder            = gdk_pixbuf_new_from_file("../assets/folder2_32.png", &error);
-    fb.pixbuf_text_file         = gdk_pixbuf_new_from_file("../assets/text3_32.png"  , &error);
+    icon_theme = gtk_icon_theme_get_default ();
+    fb.pixbuf_folder            = gtk_icon_theme_load_icon (icon_theme, "folder", 16, GTK_ICON_LOOKUP_NO_SVG, &error);
+    fb.pixbuf_text_file         = gtk_icon_theme_load_icon (icon_theme, "text-x-generic", 16, GTK_ICON_LOOKUP_NO_SVG, &error);
 
     if (error)
     {
         g_critical ("Could not load pixbuf: %s\n", error->message);
         g_error_free(error);
+        error = NULL;
     }
 
     fb.tree_store = gtk_tree_store_new( 2, GDK_TYPE_PIXBUF, G_TYPE_STRING );
@@ -41,8 +44,7 @@ GtkTreeSelection* create_file_explorer(GtkBuilder* builder){
 }
 
 void setup_file_explorer(GtkTreeViewColumn* column, file_browser fBrowser){
-    
-    //GDir* dir_contents;
+
     GError* gerr;
     gint pos = 0;
     GtkTreeIter iter, iter_child;
@@ -50,6 +52,7 @@ void setup_file_explorer(GtkTreeViewColumn* column, file_browser fBrowser){
     char* cwd = g_get_current_dir();
     PATH paths = NULL;
     int list_err = -1;
+    PATH aux = paths;
 
     printf("cwd %s\n", cwd);
 
@@ -59,7 +62,7 @@ void setup_file_explorer(GtkTreeViewColumn* column, file_browser fBrowser){
     if(list_err < 0 )
         printf("error al llenar lista.\n");
 
-    walkList(paths);
+    walkList(paths, cwd);
 
     folder_name = g_path_get_basename(cwd);
     gtk_tree_view_column_set_title(fBrowser.column0, folder_name);
@@ -68,6 +71,7 @@ void setup_file_explorer(GtkTreeViewColumn* column, file_browser fBrowser){
     fill_tree_store(paths, &iter, NULL, fBrowser, 0);
     
     set_tree_view(fBrowser);
+    free(paths);
 
 }
 
@@ -110,8 +114,7 @@ void fill_tree_store(PATH paths, GtkTreeIter* iter, GtkTreeIter* parent, file_br
             else
                 gtk_tree_store_append(fb.tree_store, iter, NULL);
 
-            if (branched)
-            {
+            if (branched) {
                 //fill_tree_store( paths->branch , &new_iter , iter, fb, indent+1);
             }
             
@@ -194,7 +197,7 @@ void walk_dir(PATH paths, GtkTreeIter* iter, file_browser fb){
             if(next_dir) {
                 PATH new_path_list = NULL;
                 //fillingList(&new_path_list, new_dir_contents, "");
-                walkList(new_path_list);
+                //walkList(new_path_list);
                 walk_dir(new_path_list, &iter_child, fb);
             }
             

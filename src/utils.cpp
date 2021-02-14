@@ -40,15 +40,13 @@ int filling_list(PATH* paths, char* file_name){
     char path[1025];
     int res = -1;
 
-    //printf("%s\n", file_name);
-
     if( (dir = opendir(file_name)) == NULL)
         perror("opendir() error");
     else {
 
         while((entry = readdir(dir)) != NULL ){
 
-            if(!strcmp (entry->d_name, ".."))
+            if(strcmp (entry->d_name, "..") == 0)
                 continue;
 
             if (entry->d_name[0] == '.')
@@ -63,22 +61,27 @@ int filling_list(PATH* paths, char* file_name){
             else {
                 if( S_ISDIR(sb.st_mode) ){
 
-                    res = insertionSorted(&(*paths), entry->d_name, FOLDER_TYPE);
-                    if(res < 0)
+                    res = insertionSorted(paths, entry->d_name, FOLDER_TYPE);
+                    if(res < 0){
+
                         printf("filling_list(): error al insertar elemento folder: %s.\n", entry->d_name);
 
-                    filling_list( &(*paths)->branch, path );
+                    } else {
+
+                        filling_list( &(*paths)->branch, path );
+                        
+                    }
 
                 } else {
 
-                    res = insertionSorted(&(*paths), entry->d_name, FILE_TYPE);
-                    if( res < 0 )
+                    res = insertionSorted(paths, entry->d_name, FILE_TYPE);
+                    if( res < 0 ){
                         printf("filling_list(): error al insertar elemento file: %s.\n", entry->d_name);
+                    }
 
                 }
             }
             
-            //printf("element %s, type %d\n", (*paths)->dir, (*paths)->type);
 
         }
         
@@ -91,7 +94,7 @@ int filling_list(PATH* paths, char* file_name){
 
 int insertionSorted(PATH* node, gchar* data, int type){
     PATH aux = *node;
-    PATH last = aux;
+    PATH last = *node;
     PATH newNode;
     int res = -1;
 
@@ -142,35 +145,22 @@ int createNode(PATH *p, gchar* data, gint type){
 
 }
 
-void walkList(PATH list){
+void walkList(PATH list, char* fn){
+    char path[1025];
 
     while(list) {
-        printf("name: %s, type: %d\n", list->dir, list->type);
+        strcpy(path, fn);
+        strcat(path, "/");
+        strcat(path, list->dir);
+
+        printf("%s, type: %d\n", path, list->type);
         if(list->branch)
-            walkList(list->branch);
+            walkList(list->branch, path);
         list = list->next;
     }
 
 }
 
-int test_list(PATH* paths, GDir* contents, gchar* dir_component){
-
-    //insertionSorted(&(*paths), "Documentos", FOLDER_TYPE);
-    //PATH aux = *paths;
-
-    //*paths = (*paths)->next;
-
-    //insertionSorted(&(*paths), "Descargas", FOLDER_TYPE);
-
-    //*paths = (*paths)->next;
-
-    //insertionSorted(&(*paths), "config.txt", FILE_TYPE);
-
-    //paths = &aux;
-
-    return 0;
-
-}
 
 void traverse(char *fn, int indent) {
   DIR *dir;

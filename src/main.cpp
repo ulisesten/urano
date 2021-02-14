@@ -17,6 +17,10 @@ static void create_terminal(              GtkWidget          *container);
 static void on_terminal_get_entry(        VteTerminal        *terminal,         gchar             *text,                guint     size,      gpointer  user_data);
 static void child_ready(                  VteTerminal        *terminal,         GPid               pid,                 GError   *error,     gpointer  user_data);
 
+/**to reallocate functions*/
+GtkWidget* create_window_controls(GtkWidget* window);
+static void on_max_btn_clicked(GtkWidget *widget, gpointer data);
+static void on_min_btn_clicked(GtkWidget *widget, gpointer data);
 
 
 int main( int argc, char** argv ){
@@ -73,6 +77,10 @@ int main( int argc, char** argv ){
     notebook_container= GTK_WIDGET(gtk_builder_get_object(builder, "notebook_container"  ));
 
     notebook = gtk_notebook_new();
+    GtkWidget* window_controls;
+    gtk_notebook_set_scrollable ((GtkNotebook *)notebook, true);
+    window_controls = create_window_controls(window);
+    gtk_notebook_set_action_widget ((GtkNotebook *)notebook, window_controls, GTK_PACK_END);
 
     /**SIGNALS*/
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL );
@@ -90,6 +98,7 @@ int main( int argc, char** argv ){
 
     gtk_container_add(GTK_CONTAINER(notebook_container), notebook);
 
+    gtk_widget_show(window_controls);
     gtk_widget_show(notebook);
     gtk_widget_show(window);
     g_object_unref(builder);
@@ -98,8 +107,32 @@ int main( int argc, char** argv ){
     return 0;
 }
 
+
+GtkWidget* create_window_controls(GtkWidget* window){
+    
+    GtkWidget *bar = gtk_header_bar_new ();
+
+    gtk_header_bar_set_show_close_button ((GtkHeaderBar *)bar, true);
+
+    return bar;
+}
+
+
 static void on_quit_btn_clicked(GtkWidget *widget, gpointer data){
     gtk_main_quit();
+}
+
+static void on_max_btn_clicked(GtkWidget *widget, gpointer data){
+
+    GtkWindow* window = (GtkWindow*)data;
+    if(gtk_window_is_maximized( window))
+        gtk_window_unmaximize ( (GtkWindow*) data );
+    else
+        gtk_window_maximize( (GtkWindow*) data );
+}
+
+static void on_min_btn_clicked(GtkWidget *widget, gpointer data){
+    gtk_window_iconify ( (GtkWindow*) data );
 }
 
 static void on_toggle_search_clicked(GtkToggleButton *source, gpointer data){

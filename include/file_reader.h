@@ -7,5 +7,6 @@
 
 void open_file( GtkWidget          *stack,            char             *file_name);
 void set_notebook(GtkWidget* notebook, char* filename, gint page_position);
+GtkWidget* create_tab(const gchar* title);
 
 #endif
