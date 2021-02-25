@@ -36,7 +36,6 @@ int filling_list(PATH* paths, char* file_name){
     DIR* dir;
     struct dirent* entry;
     struct stat sb;
-    //char* path;
     char path[1025];
     int res = -1;
 
@@ -56,33 +55,36 @@ int filling_list(PATH* paths, char* file_name){
             strcat(path, "/");
             strcat(path, entry->d_name);
 
+            printf("entry: %s\n", path);
+
             if (stat(path, &sb) != 0) 
                 fprintf(stderr, "stat() error on %s: %s\n", path, strerror(errno));
             else {
-                if( S_ISDIR(sb.st_mode) ){
-
-                    res = insertionSorted(paths, entry->d_name, FOLDER_TYPE);
+                if( S_ISDIR(sb.st_mode) ) {
+                    
+                    PATH branched = NULL;
+                    res = insertionSorted(paths, &branched, g_path_get_basename(path), FOLDER_TYPE);
                     if(res < 0){
 
-                        printf("filling_list(): error al insertar elemento folder: %s.\n", entry->d_name);
+                        printf("filling_list(): error while inserting folder: %s.\n", entry->d_name);
 
                     } else {
 
-                        filling_list( &(*paths)->branch, path );
+                        filling_list( &(branched)->branch, path );
                         
                     }
 
                 } else {
 
-                    res = insertionSorted(paths, entry->d_name, FILE_TYPE);
+                    res = insertionSorted(paths, NULL, g_path_get_basename(path), FILE_TYPE);
                     if( res < 0 ){
-                        printf("filling_list(): error al insertar elemento file: %s.\n", entry->d_name);
+                        printf("filling_list(): error while inserting file: %s.\n", entry->d_name);
                     }
 
                 }
+
             }
             
-
         }
         
         closedir(dir);
@@ -92,7 +94,7 @@ int filling_list(PATH* paths, char* file_name){
     return res;
 }
 
-int insertionSorted(PATH* node, gchar* data, int type){
+int insertionSorted(PATH* node, PATH* branched, gchar* data, int type){
     PATH aux = *node;
     PATH last = *node;
     PATH newNode;
@@ -108,20 +110,27 @@ int insertionSorted(PATH* node, gchar* data, int type){
 
     res = createNode(&newNode, data, type);
 
-    if(res == 0)
+    if(res == 0){
         if( aux == *node || !*node){
 
             newNode->next = aux;
             *node = newNode;
             res = 0;
-
+            
         } else {
+
             newNode->next = aux;
             last->next = newNode;
             res = 0;
+            
         }
-    else
-        printf("error al crear nodo.\n");
+
+        if(type == FOLDER_TYPE)
+            *branched = newNode;
+
+    } else {
+        printf("createNode returned non 0 code!.\n");
+    }
 
     return res;
 
@@ -136,8 +145,13 @@ int createNode(PATH *p, gchar* data, gint type){
         res = 0;
         (*p)->dir = data;
         (*p)->type = type;
+        (*p)->previous = NULL;
         (*p)->next = NULL;
         (*p)->branch = NULL;
+
+    } else {
+
+        printf("Error while allocating mem!\n");
 
     }
 

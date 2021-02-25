@@ -62,6 +62,10 @@ void setup_file_explorer(GtkTreeViewColumn* column, file_browser fBrowser){
     if(list_err < 0 )
         printf("error al llenar lista.\n");
 
+    //list_err = set_list(&paths, cwd);
+    //if(list_err < 0 )
+    //    printf("error al llenar lista.\n");
+
     walkList(paths, cwd);
 
     folder_name = g_path_get_basename(cwd);
@@ -147,6 +151,7 @@ gboolean
 
     GtkTreeIter iter;
     GtkWidget* notebook = (GtkWidget*) userdata;
+    bool selected = false, unselected = false;
 
     if (gtk_tree_model_get_iter(model, &iter, path))
     {
@@ -154,7 +159,11 @@ gboolean
 
         gtk_tree_model_get(model, &iter, COLUMN_STRING, &name, -1);
 
-        if (!path_currently_selected) {
+        selected = path_currently_selected;
+        unselected = !selected;
+
+        printf("sel: %d, unsel: %d\n", selected, unselected);
+        if( unselected && !selected && unselected == true){
 
             gint pos = gtk_notebook_get_n_pages ((GtkNotebook *)notebook);
             set_notebook(notebook, name, pos);
