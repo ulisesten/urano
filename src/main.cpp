@@ -5,10 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <gtk/gtk.h>
-//#include <vte/vte.h>
 #include <unistd.h>
 
-//#define UNUSED(x) (void)(x)
 
 static void on_quit_btn_clicked(          GtkWidget          *widget,           gpointer           data);
 static void on_toggle_search_clicked(     GtkToggleButton    *source,           gpointer           data);
@@ -23,10 +21,8 @@ int main( int argc, char** argv ){
 
     GtkBuilder*      builder;
     GtkWidget*       window;
-    GtkWidget*       label1;
     GtkCssProvider*  css_provider;
     GdkDisplay*      display;
-    GtkWidget*       quit_btn;
     GtkWidget*       toggle_search;
     GtkWidget*       search_bar;
     GtkWidget*       terminal_button;
@@ -50,10 +46,15 @@ int main( int argc, char** argv ){
 
 
     gtk_builder_add_from_file ( builder, "../glade/ui.glade", &err );
+    if(err){
+        fprintf(stderr, ("Failed to load builder: %s\n"), err->message);
+        g_error_free(err);
+        err = NULL;
+    }
 
     gtk_css_provider_load_from_file (css_provider, theme_file, &err);
     if(err){
-        fprintf(stderr, ("Failed to init GConf: %s\n"), err->message);
+        fprintf(stderr, ("Failed to load css_provider: %s\n"), err->message);
         g_error_free(err);
         err = NULL;
     }
@@ -84,7 +85,6 @@ int main( int argc, char** argv ){
     g_signal_connect(terminal_button, "toggled", G_CALLBACK(on_terminal_button_clicked), terminal_revealer);
     g_signal_connect(sidebar_button, "toggled", G_CALLBACK(on_toggle_sidebar_clicked), sidebar);
 
-
     create_terminal(terminal_container);
     GtkTreeSelection* selection = create_file_explorer(builder);
     
@@ -101,15 +101,13 @@ int main( int argc, char** argv ){
     gtk_main();
 
     return 0;
+
 }
 
 
 GtkWidget* create_window_controls(GtkWidget* window){
-    
     GtkWidget *bar = gtk_header_bar_new ();
-
     gtk_header_bar_set_show_close_button ((GtkHeaderBar *)bar, true);
-
     return bar;
 }
 

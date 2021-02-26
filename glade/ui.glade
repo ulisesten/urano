@@ -149,12 +149,10 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkActionBar">
+                  <object class="GtkLabel" id="app_name">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <child>
-                      <placeholder/>
-                    </child>
+                    <property name="label" translatable="yes">URANO 0.2.26</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

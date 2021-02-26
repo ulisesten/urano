@@ -7,6 +7,7 @@
                 "/usr/include/gtk-3.0",
                 "/usr/include/at-spi2-atk/2.0",
                 "/usr/include/at-spi-2.0",
+                "/usr/include/gtksourceview-4",
                 "/usr/include/dbus-1.0",
                 "/usr/lib/x86_64-linux-gnu/dbus-1.0/include",
                 "/usr/include/gtk-3.0",
@@ -26,7 +27,8 @@
                 "/usr/include/blkid",
                 "/usr/include/glib-2.0",
                 "/usr/lib/x86_64-linux-gnu/glib-2.0/include",
-                "/usr/include/vte-2.91"
+                "/usr/include/vte-2.91",
+                "/usr/include/gtksourceview-4"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

@@ -13,6 +13,9 @@ set(SRC
     src/terminal_emulator.cpp
 )
 
+#Sourceview packages
+#find_package(gtksourceview-4 REQUIRED)
+
 #GTK packages
 find_package(PkgConfig REQUIRED)
 IF		(PKG_CONFIG_FOUND)
@@ -31,6 +34,12 @@ include_directories(${VTE_INCLUDE_DIRS})
 link_directories(${VTE_LIBRARY_DIRS})
 add_definitions(${VTE_CFLAGS_OTHER})
 
+pkg_check_modules(SOURCE_VIEW REQUIRED gtksourceview-4)
+
+include_directories(${SOURCE_VIEW_INCLUDE_DIRS})
+link_directories(${SOURCE_VIEW_LIBRARY_DIRS})
+add_definitions(${SOURCE_VIEW_CFLAGS_OTHER})
+
 
 add_executable(ram ${SRC})
 
@@ -46,3 +55,4 @@ target_include_directories(ram
 #link libs
     target_link_libraries(ram ${GTK3_LIBRARIES})
     target_link_libraries(ram ${VTE_LIBRARIES})
+    target_link_libraries(ram ${SOURCE_VIEW_LIBRARIES})

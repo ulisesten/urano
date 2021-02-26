@@ -30,6 +30,11 @@ int filling_list(PATH* paths, char* file_name){
             if (stat(path, &sb) != 0) 
                 fprintf(stderr, "stat() error on %s: %s\n", path, strerror(errno));
             else {
+
+                //if( S_ISREG(sb.st_mode) ) printf("is regular %s\n", entry->d_name);
+                //if( S_ISBLK(sb.st_mode) ) printf("is block %s\n", entry->d_name);
+                //if( S_ISLNK(sb.st_mode) ) printf("is slink %s\n", entry->d_name);
+
                 if( S_ISDIR(sb.st_mode) ) {
                     
                     PATH branched = NULL;
