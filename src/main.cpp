@@ -1,26 +1,22 @@
 #include "file_explorer.h"
 #include "file_reader.h"
+#include "terminal_emulator.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <gtk/gtk.h>
-#include <vte/vte.h>
+//#include <vte/vte.h>
 #include <unistd.h>
 
-#define UNUSED(x) (void)(x)
+//#define UNUSED(x) (void)(x)
 
 static void on_quit_btn_clicked(          GtkWidget          *widget,           gpointer           data);
 static void on_toggle_search_clicked(     GtkToggleButton    *source,           gpointer           data);
 static void on_terminal_button_clicked(   GtkToggleButton    *widget,           gpointer           data);
 static void on_toggle_sidebar_clicked(    GtkToggleButton    *source,           gpointer           data);
-static void create_terminal(              GtkWidget          *container);
-static void on_terminal_get_entry(        VteTerminal        *terminal,         gchar             *text,                guint     size,      gpointer  user_data);
-static void child_ready(                  VteTerminal        *terminal,         GPid               pid,                 GError   *error,     gpointer  user_data);
 
 /**to reallocate functions*/
 GtkWidget* create_window_controls(GtkWidget* window);
-static void on_max_btn_clicked(GtkWidget *widget, gpointer data);
-static void on_min_btn_clicked(GtkWidget *widget, gpointer data);
 
 
 int main( int argc, char** argv ){
@@ -122,19 +118,6 @@ static void on_quit_btn_clicked(GtkWidget *widget, gpointer data){
     gtk_main_quit();
 }
 
-static void on_max_btn_clicked(GtkWidget *widget, gpointer data){
-
-    GtkWindow* window = (GtkWindow*)data;
-    if(gtk_window_is_maximized( window))
-        gtk_window_unmaximize ( (GtkWindow*) data );
-    else
-        gtk_window_maximize( (GtkWindow*) data );
-}
-
-static void on_min_btn_clicked(GtkWidget *widget, gpointer data){
-    gtk_window_iconify ( (GtkWindow*) data );
-}
-
 static void on_toggle_search_clicked(GtkToggleButton *source, gpointer data){
     
     GtkSearchBar* search_bar = (GtkSearchBar*) data;
@@ -161,48 +144,3 @@ static void on_toggle_sidebar_clicked(GtkToggleButton *source, gpointer data){
     gtk_revealer_set_reveal_child(side_bar, toggle );
 
 }
-
-static void create_terminal(GtkWidget* container){
-
-    GtkWidget   * terminal = vte_terminal_new ();
-    gchar       * cwd      = g_get_current_dir();
-
-    /* Start a new shell */
-    gchar       **envp      = g_get_environ();
-    gchar       * arr[]     = {g_strdup(g_environ_getenv(envp, "SHELL")), NULL };
-    gchar       **command   = arr;
-
-    g_strfreev(envp);
-    
-    vte_terminal_spawn_async(VTE_TERMINAL(terminal),
-        VTE_PTY_DEFAULT,
-        cwd,         /* working directory  */
-        command,      /* command */
-        NULL,         /* environment */
-        (GSpawnFlags)0, /* spawn flags */
-        NULL, NULL,   /* child setup */
-        NULL,         /* child pid */
-        -1,           /* timeout */
-        NULL,         /* cancellable */
-        child_ready,  /* callback */
-        NULL);        /* user_data */
-
-    vte_terminal_set_size ((VteTerminal *)terminal, 256, 7);
-    gtk_widget_show(terminal);
-    gtk_container_add(GTK_CONTAINER(container), terminal);
-
-}
-
-static void on_terminal_get_entry(VteTerminal *terminal,gchar *text, guint size, gpointer user_data){
-    
-    vte_terminal_feed (terminal, (const char*)text, size );
-
-}
-
-
-static void child_ready(VteTerminal *terminal, GPid pid, GError *error, gpointer user_data)
-{
-    if (!terminal) return;
-    if (pid == -1) gtk_main_quit();
-}
-

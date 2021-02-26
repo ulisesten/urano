@@ -1,36 +1,6 @@
 #include "utils.h"
 
 
-void sorting_files(PATH* paths, GDir* contents, gchar* cwd){
-    gchar* aux;
-    gchar* dir = (gchar*)g_dir_read_name(contents);
-    if(dir){
-
-        push(dir, paths, aux);
-        sorting_files(&(*paths)->next, contents, aux);
-    }
-}
-
-void push(gchar* directory, PATH* sorted_files, gchar* aux) {
-
-    *sorted_files = (PATH)malloc(sizeof(struct path));
-
-    if (*sorted_files) {
-        struct stat sb;
-
-        if(stat(directory, &sb) == 0 && S_ISDIR(sb.st_mode)){
-            (*sorted_files)->type = FOLDER_TYPE;
-        } else {
-            (*sorted_files)->type = FILE_TYPE;
-        }
-
-        (*sorted_files)->dir = directory;
-        (*sorted_files)->next = NULL;
-
-    }
-
-}
-
 int filling_list(PATH* paths, char* file_name){
 
     DIR* dir;
@@ -55,7 +25,7 @@ int filling_list(PATH* paths, char* file_name){
             strcat(path, "/");
             strcat(path, entry->d_name);
 
-            printf("entry: %s\n", path);
+            //printf("entry: %s\n", path);
 
             if (stat(path, &sb) != 0) 
                 fprintf(stderr, "stat() error on %s: %s\n", path, strerror(errno));
@@ -63,7 +33,7 @@ int filling_list(PATH* paths, char* file_name){
                 if( S_ISDIR(sb.st_mode) ) {
                     
                     PATH branched = NULL;
-                    res = insertionSorted(paths, &branched, g_path_get_basename(path), FOLDER_TYPE);
+                    res = insertionSorted(paths, &branched, g_path_get_basename(path), g_path_get_dirname (path), FOLDER_TYPE);
                     if(res < 0){
 
                         printf("filling_list(): error while inserting folder: %s.\n", entry->d_name);
@@ -76,7 +46,7 @@ int filling_list(PATH* paths, char* file_name){
 
                 } else {
 
-                    res = insertionSorted(paths, NULL, g_path_get_basename(path), FILE_TYPE);
+                    res = insertionSorted(paths, NULL, g_path_get_basename(path), g_path_get_dirname (path), FILE_TYPE);
                     if( res < 0 ){
                         printf("filling_list(): error while inserting file: %s.\n", entry->d_name);
                     }
@@ -94,7 +64,7 @@ int filling_list(PATH* paths, char* file_name){
     return res;
 }
 
-int insertionSorted(PATH* node, PATH* branched, gchar* data, int type){
+int insertionSorted(PATH* node, PATH* branched, gchar* data, char* path, int type){
     PATH aux = *node;
     PATH last = *node;
     PATH newNode;
@@ -108,7 +78,7 @@ int insertionSorted(PATH* node, PATH* branched, gchar* data, int type){
 
     }
 
-    res = createNode(&newNode, data, type);
+    res = createNode(&newNode, data, path, type);
 
     if(res == 0){
         if( aux == *node || !*node){
@@ -136,7 +106,7 @@ int insertionSorted(PATH* node, PATH* branched, gchar* data, int type){
 
 }
 
-int createNode(PATH *p, gchar* data, gint type){
+int createNode(PATH *p, gchar* data, char* path, gint type){
     int res = -1;
 
     *p = (PATH) malloc(sizeof(struct path));
@@ -144,6 +114,7 @@ int createNode(PATH *p, gchar* data, gint type){
 
         res = 0;
         (*p)->dir = data;
+        (*p)->path = path;
         (*p)->type = type;
         (*p)->previous = NULL;
         (*p)->next = NULL;
@@ -176,7 +147,7 @@ void walkList(PATH list, char* fn){
 }
 
 
-void traverse(char *fn, int indent) {
+/*void traverse(char *fn, int indent) {
   DIR *dir;
   struct dirent *entry;
   int count;
@@ -203,4 +174,4 @@ void traverse(char *fn, int indent) {
     }
     closedir(dir);
   }
-}
+}*/

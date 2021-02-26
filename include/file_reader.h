@@ -4,9 +4,8 @@
 #include <gtk/gtk.h>
 #include <glib/gprintf.h>
 
-
-void open_file( GtkWidget          *stack,            char             *file_name);
-void set_notebook(GtkWidget* notebook, char* filename, gint page_position);
+void set_notebook(GtkWidget* notebook, char* filename, char* path, gint page_position);
 GtkWidget* create_tab(const gchar* title);
+void close_tab (GtkButton *button, gpointer   user_data);
 
 #endif

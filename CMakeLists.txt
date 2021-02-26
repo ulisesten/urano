@@ -10,6 +10,7 @@ set(SRC
     src/file_explorer.cpp
     src/file_reader.cpp
     src/utils.cpp
+    src/terminal_emulator.cpp
 )
 
 #GTK packages

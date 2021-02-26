@@ -1,9 +1,11 @@
 #ifndef __FILE_EXPLORER__
 #define __FILE_EXPLORER__
 
+#include <stdio.h>
 #include <gtk/gtk.h>
 #include <glib/gprintf.h>
 #include <glib.h>
+#include "file_reader.h"
 #include "utils.h"
 
 typedef struct {
@@ -20,7 +22,8 @@ typedef struct {
 
 enum {
   COLUMN_PIXBUF,
-  COLUMN_STRING
+  COLUMN_STRING,
+  COLUMN_PATH
 };
 
 GtkTreeSelection*
