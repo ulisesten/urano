@@ -54,15 +54,12 @@ void setup_file_explorer(GtkTreeViewColumn* column, file_browser fBrowser){
     char* cwd = g_get_current_dir();
     PATH paths = NULL;
     int list_err = -1;
-    //PATH aux = paths;
 
     printf("cwd %s\n", cwd);
     
     list_err = filling_list(&paths, cwd);
     if(list_err < 0 )
         printf("error al llenar lista.\n");
-
-    //walkList(paths, cwd);
 
     folder_name = g_path_get_basename(cwd);
     gtk_tree_view_column_set_title(fBrowser.column0, folder_name);
@@ -149,16 +146,12 @@ gboolean
         gchar *location = NULL;
 
         gtk_tree_model_get(model, &iter, COLUMN_STRING, &name, COLUMN_PATH, &location, -1);
-        //gtk_tree_model_get(model, &iter, COLUMN_PATH, &location, -1);
-
-        //GtkTreePath* row_path = gtk_tree_model_get_path(model, &iter);
 
         if(location){
             if(!path_currently_selected){
 
                 strcat(location,"/");
 
-                //gint pos = gtk_notebook_get_n_pages ((GtkNotebook *)notebook);
                 set_notebook(notebook, name, location);
 
             }

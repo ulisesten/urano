@@ -8,24 +8,23 @@
 void set_notebook(GtkWidget* notebook, char* file_name, char* path_name) {
     GtkWidget*       scrolled;
     GtkWidget*       source_view;
-    GtkSourceBuffer *buffer;
+    GtkSourceBuffer* buffer;
     GtkWidget*       tab;
-    NotebookTab      notebook_tab;
     gchar*           basename;
     gchar*           contents;
     gsize            length;
     GFile*           file;
     GError*          gErr = NULL;
-    bool             contents_loaded = false;
     char             location[1024];
+    bool             contents_loaded = false;
 
     strcpy(location, path_name);
     strcat(location,file_name);
 
     file = g_file_new_for_path(location);
     if(file){
-        basename = g_path_get_basename(file_name);
 
+        basename = g_path_get_basename(file_name);
         scrolled = gtk_scrolled_window_new(NULL,NULL);
         gtk_widget_show(scrolled);
         gtk_widget_set_hexpand(scrolled,TRUE);
@@ -64,13 +63,12 @@ void set_notebook(GtkWidget* notebook, char* file_name, char* path_name) {
 }
 
 void setting_buffer(GtkSourceBuffer* buffer, GtkWidget* source_view, char* location) {
-    GtkSourceLanguage *lang = NULL;
-    GtkSourceLanguageManager* manager = gtk_source_language_manager_new ();
-    GtkSourceStyleSchemeManager * styleSchemeMng = gtk_source_style_scheme_manager_new ();
-    gchar* dirs[] = {(gchar*)"../assets/styles/", NULL};
-
-    gboolean result_uncertain;
-    gchar *content_type;
+    GtkSourceLanguage*             lang             = NULL;
+    GtkSourceLanguageManager*      manager          = gtk_source_language_manager_new ();
+    GtkSourceStyleSchemeManager*   styleSchemeMng   = gtk_source_style_scheme_manager_new ();
+    gchar*                         dirs[]           = {(gchar*)"../assets/styles/", NULL};
+    gboolean                       result_uncertain;
+    gchar*                         content_type;
 
     content_type = g_content_type_guess (location, NULL, 0, &result_uncertain);
     if (result_uncertain)

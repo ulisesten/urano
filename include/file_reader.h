@@ -5,11 +5,6 @@
 #include <glib/gprintf.h>
 #include <gtksourceview/gtksource.h>
 
-typedef struct {
-    GtkNotebook* notebook;
-    GtkWidget* label;
-} *NotebookTab;
-
 void set_notebook(GtkWidget* notebook, char* filename, char* path);
 void create_tab(const gchar* title, GtkNotebook* notebook, GtkWidget* scrolled);
 void close_tab (GtkButton *button, gpointer   user_data);
