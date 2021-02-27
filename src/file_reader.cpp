@@ -31,8 +31,6 @@ void set_notebook(GtkWidget* notebook, char* file_name, char* path_name, gint pa
         gtk_widget_set_hexpand(scrolled,TRUE);
         gtk_widget_set_vexpand(scrolled,TRUE);
 
-        int is_added = gtk_notebook_page_num((GtkNotebook*)notebook, scrolled);
-
         contents_loaded = g_file_load_contents (file, NULL, &contents, &length, NULL, &gErr);
         if (gErr) {
             printf ("set_notebook(): Could not load content: %s\n", gErr->message);
@@ -52,13 +50,8 @@ void set_notebook(GtkWidget* notebook, char* file_name, char* path_name, gint pa
             gtk_container_add(GTK_CONTAINER(scrolled), source_view);
             
             //notebook_tab->notebook = (GtkNotebook*)notebook;
-            tab = create_tab(basename, (GtkNotebook*)notebook);
-            gint res = gtk_notebook_append_page (GTK_NOTEBOOK(notebook), scrolled, tab);
-            if(res < 0){
-                g_printf("notebook fails.\n");
-            }
-
-            gtk_notebook_set_current_page ((GtkNotebook *)notebook, is_added);
+            create_tab(basename, (GtkNotebook*)notebook, scrolled);
+            
 
             g_free (contents);
             
@@ -109,7 +102,7 @@ void on_buffer_change (GtkTextBuffer *textbuffer, gpointer user_data) {
     printf("buffer changed: %s\n", loc);
 }
 
-GtkWidget* create_tab(const gchar* title, GtkNotebook* notebook){
+void create_tab(const gchar* title, GtkNotebook* notebook, GtkWidget* scrolled) {
     GtkWidget* box, *title_label, *close_label;
 
     close_label = gtk_button_new_from_icon_name ("window-close-symbolic", GTK_ICON_SIZE_MENU);
@@ -119,20 +112,27 @@ GtkWidget* create_tab(const gchar* title, GtkNotebook* notebook){
     gtk_widget_show(close_label);
     gtk_widget_show(title_label);
 
-    g_signal_connect(close_label, "clicked", G_CALLBACK(close_tab), notebook );
-
     gtk_container_add((GtkContainer*)box, title_label);
     gtk_container_add((GtkContainer*)box, close_label);
 
+    gint res = gtk_notebook_append_page (GTK_NOTEBOOK(notebook), scrolled, box);
+    if(res < 0){
+        g_printf("notebook fails.\n");
+    }
+
+    int is_added = gtk_notebook_page_num((GtkNotebook*)notebook, scrolled);
+    gtk_notebook_set_current_page ((GtkNotebook *)notebook, is_added);
+    
+    g_signal_connect(close_label, "clicked", G_CALLBACK(close_tab), scrolled );
+
     gtk_widget_show(box);
 
-    return box;
 }
 
-void close_tab (GtkButton *button, gpointer   user_data) {
+void close_tab (GtkButton *button, gpointer notebook_child) {
 
-    GtkWidget* parent = gtk_widget_get_parent((GtkWidget*)button);
-    int num = gtk_notebook_page_num ((GtkNotebook*)user_data, parent);
-    gtk_notebook_remove_page ((GtkNotebook*)user_data, num);
+    GtkWidget* notebook = gtk_widget_get_parent ((GtkWidget*)notebook_child);
+    int num = gtk_notebook_page_num ((GtkNotebook*)notebook, (GtkWidget*)notebook_child);
+    gtk_notebook_remove_page ((GtkNotebook*)notebook, num);
 
 }
