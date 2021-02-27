@@ -98,8 +98,15 @@ void setting_buffer(GtkSourceBuffer* buffer, GtkWidget* source_view, char* locat
     gtk_source_view_set_show_line_numbers ((GtkSourceView*)source_view, TRUE);
     gtk_source_view_set_highlight_current_line ((GtkSourceView*)source_view, TRUE);
 
+    g_signal_connect(buffer, "changed", G_CALLBACK(on_buffer_change), location);
+
     g_free(content_type);
 
+}
+
+void on_buffer_change (GtkTextBuffer *textbuffer, gpointer user_data) {
+    char* loc = (char*)user_data;
+    printf("buffer changed: %s\n", loc);
 }
 
 GtkWidget* create_tab(const gchar* title, GtkNotebook* notebook){

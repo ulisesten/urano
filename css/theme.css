@@ -10,9 +10,8 @@ textview#side_view {
     color: #fff;
 }
 
-
-text {
-    color: #fff;
+textview {
+    border-style: none;
 }
 
 treeview {
@@ -40,8 +39,7 @@ headerbar {
     border-bottom-color: transparent;
 }
 
-/*tab {
-    padding: 2px;
-}*/
-
+tab {
+    background-color: #121212;
+}
 
