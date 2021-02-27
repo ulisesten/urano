@@ -5,19 +5,19 @@
 
 
 /**page position unused*/
-void set_notebook(GtkWidget* notebook, char* file_name, char* path_name, gint page_position) {
-    GtkWidget* scrolled;
-    GtkWidget* source_view;
+void set_notebook(GtkWidget* notebook, char* file_name, char* path_name) {
+    GtkWidget*       scrolled;
+    GtkWidget*       source_view;
     GtkSourceBuffer *buffer;
-    GtkWidget* tab;
-    NotebookTab notebook_tab;
-    gchar*     basename;
-    gchar*     contents;
-    gsize      length;
-    GFile*     file;
-    GError*    gErr = NULL;
-    bool       contents_loaded = false;
-    char       location[1024];
+    GtkWidget*       tab;
+    NotebookTab      notebook_tab;
+    gchar*           basename;
+    gchar*           contents;
+    gsize            length;
+    GFile*           file;
+    GError*          gErr = NULL;
+    bool             contents_loaded = false;
+    char             location[1024];
 
     strcpy(location, path_name);
     strcat(location,file_name);
@@ -49,10 +49,8 @@ void set_notebook(GtkWidget* notebook, char* file_name, char* path_name, gint pa
 
             gtk_container_add(GTK_CONTAINER(scrolled), source_view);
             
-            //notebook_tab->notebook = (GtkNotebook*)notebook;
             create_tab(basename, (GtkNotebook*)notebook, scrolled);
             
-
             g_free (contents);
             
         }

@@ -158,8 +158,8 @@ gboolean
 
                 strcat(location,"/");
 
-                gint pos = gtk_notebook_get_n_pages ((GtkNotebook *)notebook);
-                set_notebook(notebook, name, location, pos);
+                //gint pos = gtk_notebook_get_n_pages ((GtkNotebook *)notebook);
+                set_notebook(notebook, name, location);
 
             }
         } else {
