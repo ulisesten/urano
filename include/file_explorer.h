@@ -12,7 +12,7 @@ typedef struct {
     GtkTreeView            * tree_view = NULL;
     GtkListStore           * list_store;
     GtkTreeStore           * tree_store;
-    GtkTreeViewColumn      * column0;
+    GtkTreeViewColumn      * column;
     GtkTreeViewColumn      * column1;
     GtkCellRenderer        * renderer;
     GtkTreeSelection       * selection;
@@ -33,7 +33,7 @@ void initialize_tree_store(  file_browser* fb, GtkTreeIter * iter);
 void fill_tree_store(        PATH paths,    GtkTreeIter* iter, GtkTreeIter* parent, file_browser fb, int indent);
 void set_tree_view(          file_browser        f_browser);
 gboolean
-     view_selection_func (   GtkTreeSelection   *selection,
+     attach_notebook_to_selection (   GtkTreeSelection   *selection,
                              GtkTreeModel       *model,
                              GtkTreePath        *path,
                              gboolean            path_currently_selected,

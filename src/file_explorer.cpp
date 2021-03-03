@@ -7,25 +7,25 @@ GtkTreeSelection* create_file_explorer(GtkBuilder* builder){
 
     fb.tree_view  = GTK_TREE_VIEW(gtk_builder_get_object(builder, "tree_view"));
     fb.selection  = gtk_tree_view_get_selection (GTK_TREE_VIEW(fb.tree_view));
-    fb.column0    = gtk_tree_view_column_new    ();
+    fb.column     = gtk_tree_view_column_new    ();
 
     fb.renderer   = gtk_cell_renderer_pixbuf_new();
-    gtk_tree_view_column_pack_start             (fb.column0, fb.renderer, FALSE);
-    gtk_tree_view_column_set_attributes         (fb.column0, fb.renderer, "pixbuf", COLUMN_PIXBUF, NULL);
+    gtk_tree_view_column_pack_start             (fb.column, fb.renderer, FALSE);
+    gtk_tree_view_column_set_attributes         (fb.column, fb.renderer, "pixbuf", COLUMN_PIXBUF, NULL);
     
     fb.renderer   = gtk_cell_renderer_text_new  ();
-    gtk_tree_view_column_pack_start             (fb.column0, fb.renderer, TRUE);
-    gtk_tree_view_column_set_attributes         (fb.column0, fb.renderer, "text", COLUMN_STRING, NULL);
+    gtk_tree_view_column_pack_start             (fb.column, fb.renderer, TRUE);
+    gtk_tree_view_column_set_attributes         (fb.column, fb.renderer, "text", COLUMN_STRING, NULL);
 
     fb.renderer   = gtk_cell_renderer_text_new  ();
-    gtk_tree_view_column_pack_start             (fb.column0, fb.renderer, TRUE);
-    gtk_tree_view_column_set_attributes         (fb.column0, fb.renderer, "text", COLUMN_PATH, NULL);
+    gtk_tree_view_column_pack_start             (fb.column, fb.renderer, TRUE);
+    gtk_tree_view_column_set_attributes         (fb.column, fb.renderer, "text", COLUMN_PATH, NULL);
     gtk_cell_renderer_set_visible               (fb.renderer, FALSE);
 
 
-    icon_theme = gtk_icon_theme_get_default ();
-    fb.pixbuf_folder            = gtk_icon_theme_load_icon (icon_theme, "folder", 16, GTK_ICON_LOOKUP_NO_SVG, &error);
-    fb.pixbuf_text_file         = gtk_icon_theme_load_icon (icon_theme, "text-x-generic", 16, GTK_ICON_LOOKUP_NO_SVG, &error);
+    icon_theme             = gtk_icon_theme_get_default ();
+    fb.pixbuf_folder       = gtk_icon_theme_load_icon (icon_theme, "folder", 16, GTK_ICON_LOOKUP_NO_SVG, &error);
+    fb.pixbuf_text_file    = gtk_icon_theme_load_icon (icon_theme, "text-x-generic", 16, GTK_ICON_LOOKUP_NO_SVG, &error);
 
     if (error)
     {
@@ -54,15 +54,13 @@ void setup_file_explorer(GtkTreeViewColumn* column, file_browser fBrowser){
     char* cwd = g_get_current_dir();
     PATH paths = NULL;
     int list_err = -1;
-
-    printf("cwd %s\n", cwd);
     
     list_err = filling_list(&paths, cwd);
     if(list_err < 0 )
         printf("error al llenar lista.\n");
 
     folder_name = g_path_get_basename(cwd);
-    gtk_tree_view_column_set_title(fBrowser.column0, folder_name);
+    gtk_tree_view_column_set_title(fBrowser.column, folder_name);
 
     initialize_tree_store(&fBrowser, &iter);
     fill_tree_store(paths, &iter, NULL, fBrowser, 0);
@@ -76,7 +74,7 @@ void setup_file_explorer(GtkTreeViewColumn* column, file_browser fBrowser){
 void set_tree_view(file_browser fb){
                                                      
     gtk_tree_view_set_model(fb.tree_view, GTK_TREE_MODEL( fb.tree_store ));
-    gtk_tree_view_append_column(fb.tree_view, fb.column0);
+    gtk_tree_view_append_column(fb.tree_view, fb.column);
     
 }
 
@@ -130,12 +128,9 @@ void fill_tree_store(PATH paths, GtkTreeIter* iter, GtkTreeIter* parent, file_br
 }
 
 
-gboolean
-  view_selection_func (GtkTreeSelection *selection
-                     , GtkTreeModel *model
-                     , GtkTreePath *path
-                     , gboolean path_currently_selected
-                     , gpointer userdata) {
+gboolean attach_notebook_to_selection (GtkTreeSelection *selection, GtkTreeModel *model
+                            , GtkTreePath      *path     , gboolean path_currently_selected
+                            , gpointer          userdata ) {
 
     GtkTreeIter iter;
     GtkWidget* notebook = (GtkWidget*) userdata;
@@ -151,20 +146,18 @@ gboolean
             if(!path_currently_selected){
 
                 strcat(location,"/");
-
-                set_notebook(notebook, name, location);
+                set_notebook(notebook, name, location, NULL);
 
             }
         } else {
             printf("no location\n");
         }
 
-        //gtk_tree_path_free(row_path);
         g_free(name);
 
     }
 
-    return TRUE;
+    return FALSE;
 }
 
 

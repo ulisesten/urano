@@ -6,16 +6,15 @@
     <property name="resizable">True</property>
     <property name="title" translatable="yes">column</property>
   </object>
-  <object class="GtkApplicationWindow" id="window">
+  <object class="GtkWindow" id="window">
     <property name="can_focus">True</property>
     <property name="default_width">800</property>
     <property name="default_height">600</property>
-    <property name="decorated">False</property>
     <child type="titlebar">
       <placeholder/>
     </child>
     <child>
-      <object class="GtkBox">
+      <object class="GtkBox" id="main_box">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
@@ -92,6 +91,26 @@
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="save_button">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <child>
+                  <object class="GtkImage" id="save_butto">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="icon_name">drive-harddisk</property>
+                    <property name="icon_size">1</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>
