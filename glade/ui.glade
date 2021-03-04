@@ -2,6 +2,13 @@
 <!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkImage">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="tooltip_text" translatable="yes">open folder</property>
+    <property name="icon_name">document-open-symbolic</property>
+    <property name="icon_size">1</property>
+  </object>
   <object class="GtkTreeViewColumn" id="treeviewcolumn1">
     <property name="resizable">True</property>
     <property name="title" translatable="yes">column</property>
@@ -95,15 +102,27 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="save_button">
+              <object class="GtkSeparator">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="open_folder_btn">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
                 <child>
-                  <object class="GtkImage" id="save_butto">
+                  <object class="GtkImage">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="icon_name">drive-harddisk</property>
+                    <property name="icon_name">document-open-symbolic</property>
                     <property name="icon_size">1</property>
                   </object>
                 </child>
@@ -111,7 +130,27 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="save_btn">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="icon_name">document-save-symbolic</property>
+                    <property name="icon_size">1</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">5</property>
               </packing>
             </child>
           </object>
@@ -147,6 +186,41 @@
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkActionBar">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkImage" id="new_file_btn">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="tooltip_text" translatable="yes">new file</property>
+                        <property name="icon_name">document-new-symbolic</property>
+                        <property name="icon_size">2</property>
+                      </object>
+                      <packing>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkImage" id="new_folder_btn">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="tooltip_text" translatable="yes">new folder</property>
+                        <property name="icon_name">folder-new-symbolic</property>
+                        <property name="icon_size">2</property>
+                      </object>
+                      <packing>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkScrolledWindow">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -165,7 +239,7 @@
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
-                    <property name="position">1</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
                 <child>
@@ -177,7 +251,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
               </object>

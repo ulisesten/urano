@@ -17,6 +17,8 @@ gboolean on_drag_window (GtkWidget *widget, GdkDragContext *context,
                          int        x,      int             y,
                          guint      time,   gpointer        user_data );
 
+void on_open_folder_button_clicked(GtkWidget* widget, gpointer data);
+
 
 int main( int argc, char** argv ){
 
@@ -27,6 +29,7 @@ int main( int argc, char** argv ){
     GdkDisplay*       display;
     GtkWidget*        main_box;
     GtkWidget*        save_button;
+    GtkWidget*        open_folder_button;
     GtkWidget*        toggle_search;
     GtkWidget*        search_bar;
     GtkWidget*        terminal_button;
@@ -77,7 +80,8 @@ int main( int argc, char** argv ){
     sidebar_button     = GTK_WIDGET(gtk_builder_get_object(builder, "sidebarbutton"       ));
     sidebar            = GTK_WIDGET(gtk_builder_get_object(builder, "sidebar_revealer"    ));
     notebook_container = GTK_WIDGET(gtk_builder_get_object(builder, "notebook_container"  ));
-    save_button        = GTK_WIDGET(gtk_builder_get_object(builder, "save_button"         ));
+    save_button        = GTK_WIDGET(gtk_builder_get_object(builder, "save_btn"            ));
+    open_folder_button = GTK_WIDGET(gtk_builder_get_object(builder, "open_folder_btn"     ));
 
     selection          = create_file_explorer( builder);
     notebook           = create_notebook(      builder);
@@ -87,14 +91,14 @@ int main( int argc, char** argv ){
     gtk_container_add(GTK_CONTAINER(notebook_container), notebook);
 
     /**SIGNALS*/
-    g_signal_connect(window,          "destroy", G_CALLBACK(gtk_main_quit), NULL );
-    g_signal_connect(toggle_search,   "toggled", G_CALLBACK(on_toggle_search_clicked),   search_bar);
-    g_signal_connect(terminal_button, "toggled", G_CALLBACK(on_terminal_button_clicked), terminal_revealer);
-    g_signal_connect(sidebar_button,  "toggled", G_CALLBACK(on_toggle_sidebar_clicked),  sidebar);
-    g_signal_connect(save_button,     "clicked", G_CALLBACK(on_save_button_clicked),     notebook);
-    //g_signal_override_class_handler ("clicked", G_TYPE_OBJECT, (GCallback)get_window_position);
+    g_signal_connect(window,             "destroy", G_CALLBACK(gtk_main_quit), NULL );
+    g_signal_connect(toggle_search,      "toggled", G_CALLBACK(on_toggle_search_clicked),       search_bar);
+    g_signal_connect(terminal_button,    "toggled", G_CALLBACK(on_terminal_button_clicked),     terminal_revealer);
+    g_signal_connect(sidebar_button,     "toggled", G_CALLBACK(on_toggle_sidebar_clicked),      sidebar);
+    g_signal_connect(save_button,        "clicked", G_CALLBACK(on_save_button_clicked),         notebook);
+    g_signal_connect(open_folder_button, "clicked", G_CALLBACK(on_open_folder_button_clicked),  NULL);
+    
     gtk_builder_connect_signals(       builder,  NULL);
-
     gtk_widget_show(notebook);
     gtk_widget_show(window);
     g_object_unref(builder);
@@ -102,6 +106,34 @@ int main( int argc, char** argv ){
 
     return 0;
 
+}
+
+void on_open_folder_button_clicked(GtkWidget* widget, gpointer data) {
+    GtkWidget* folder_chooser;
+    bool res;
+
+    folder_chooser = gtk_file_chooser_dialog_new ("Select folder",
+                             NULL,
+                             GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+                             "_Cancel", GTK_RESPONSE_CANCEL,
+                             "_Open", GTK_RESPONSE_ACCEPT,
+                             NULL);
+
+    //gtk_widget_show(folder_chooser);
+    res = gtk_dialog_run((GtkDialog*)folder_chooser);
+    if (res)
+    {
+        //char[] filename;
+        char* filename = gtk_file_chooser_get_uri((GtkFileChooser*)folder_chooser);
+        //open_file (filename);
+        printf("open folder %s\n", filename);
+        g_free (filename);
+    } else {
+        printf("open folder: something went wrong\n");
+    }
+
+    //printf("open folder\n");
+    gtk_widget_destroy (folder_chooser);
 }
 
 void get_window_position(GtkWindow *window, GtkWidget* header){

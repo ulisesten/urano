@@ -146,7 +146,7 @@ gboolean attach_notebook_to_selection (GtkTreeSelection *selection, GtkTreeModel
             if(!path_currently_selected){
 
                 strcat(location,"/");
-                set_notebook(notebook, name, location, NULL);
+                set_notebook(notebook, name, location);
 
             }
         } else {

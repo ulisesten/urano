@@ -6,7 +6,7 @@ GtkWidget* create_notebook(GtkBuilder* builder) {
     
     gtk_notebook_set_scrollable ((GtkNotebook *)notebook, true);
     gtk_notebook_set_action_widget ((GtkNotebook *)notebook, create_window_controls(), GTK_PACK_END);
-    set_notebook(notebook, (char*)"welcome.md", (char*)"../assets/pages/", builder);
+    set_notebook(notebook, (char*)"welcome.md", (char*)"../assets/pages/");
 
     return notebook;
 
@@ -23,7 +23,7 @@ GtkWidget* create_window_controls() {
     
 }
 
-void set_notebook(GtkWidget* notebook, char* file_name, char* path_name, GtkBuilder* builder) {
+void set_notebook(GtkWidget* notebook, char* file_name, char* path_name) {
     GtkWidget*       scrolled;
     GtkWidget*       source_view;
     GtkWidget*       title;
@@ -71,8 +71,9 @@ void set_notebook(GtkWidget* notebook, char* file_name, char* path_name, GtkBuil
             gtk_container_add(GTK_CONTAINER(scrolled), source_view);
             title = create_tab(basename, (GtkNotebook*)notebook, scrolled);
 
-            g_signal_connect(source_view, "key-press-event", G_CALLBACK(on_key_press), path);
-            //g_signal_connect(buffer, "changed", G_CALLBACK(on_buffer_change), title);
+            g_signal_connect(source_view, "key-press-event",  G_CALLBACK(on_key_press),       path  );
+            g_signal_connect(buffer,      "changed",          G_CALLBACK(on_modifying_file),   title );
+            g_signal_connect(buffer,      "modified-changed", G_CALLBACK(on_file_saved), title );
             
             g_free (contents);
             
@@ -101,12 +102,11 @@ gboolean on_key_press(GtkWidget* widget, GdkEventKey *event, gpointer path){
                 bool res;
 
                 GString* text = (GString*)path;
-                printf("save file %s\n", text->str);
 
                 gtk_text_buffer_get_start_iter (buffer, &start);
                 gtk_text_buffer_get_end_iter (buffer, &end);
 
-                char* content      = gtk_text_buffer_get_text (buffer, &start, &end, false);
+                char* content = gtk_text_buffer_get_text (buffer, &start, &end, false);
                 gtk_text_buffer_set_modified (buffer, false);
                 res = g_file_set_contents( text->str, content, -1, &gerr);
                 if (gerr) {
@@ -125,7 +125,7 @@ gboolean on_key_press(GtkWidget* widget, GdkEventKey *event, gpointer path){
     return FALSE;
 }
 
-void on_buffer_change (GtkTextBuffer *buffer, gpointer data) {
+void on_modifying_file (GtkTextBuffer *buffer, gpointer data) {
     
     const char* name = gtk_label_get_text((GtkLabel*)data);
     char new_name[100] = "*";
@@ -133,7 +133,18 @@ void on_buffer_change (GtkTextBuffer *buffer, gpointer data) {
         strcat(new_name, name );
         gtk_label_set_text((GtkLabel*)data,new_name);
     }
-    printf("buffer changed %s\n", new_name);
+    //printf("buffer changed %s\n", new_name);
+
+}
+
+void on_file_saved (GtkTextBuffer *textbuffer, gpointer user_data) {
+
+    const char* name = gtk_label_get_text((GtkLabel*)user_data);
+    if(name[0] == '*'){
+        *name++;
+        //printf("modified: %s\n", name);
+        gtk_label_set_text((GtkLabel*)user_data, name);
+    }
 
 }
 
