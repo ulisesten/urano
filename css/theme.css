@@ -33,11 +33,11 @@ button {
 }
 
 headerbar {
-    background-color: transparent;
-    border-bottom-style: solid;
+    border-bottom-style: none;
+    /*background-color: transparent;
     border-bottom-width: 1px;
     border-bottom-color: transparent;
-    margin: 0px;
+    margin: 0px;*/
 }
 
 tab {

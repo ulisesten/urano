@@ -1,11 +1,13 @@
 #include "file_reader.h"
 
-GtkWidget* create_notebook(GtkBuilder* builder) {
+GtkWidget* create_notebook(GtkWidget** header) {
 
     GtkWidget* notebook = gtk_notebook_new();
+
+    *header = create_window_controls();
     
-    gtk_notebook_set_scrollable ((GtkNotebook *)notebook, true);
-    gtk_notebook_set_action_widget ((GtkNotebook *)notebook, create_window_controls(), GTK_PACK_END);
+    //gtk_notebook_set_scrollable ((GtkNotebook *)notebook, true);
+    //gtk_notebook_set_action_widget ((GtkNotebook *)notebook, *header, GTK_PACK_END);
     set_notebook(notebook, (char*)"welcome.md", (char*)"../assets/pages/");
 
     return notebook;
@@ -14,11 +16,15 @@ GtkWidget* create_notebook(GtkBuilder* builder) {
 
 GtkWidget* create_window_controls() {
     
+    //GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     GtkWidget *bar = gtk_header_bar_new ();
     gtk_header_bar_set_show_close_button ((GtkHeaderBar *)bar, true);
     gtk_header_bar_set_has_subtitle((GtkHeaderBar *)bar, false);
+
+    //gtk_container_add((GtkContainer*)box, bar);
+
     gtk_widget_show(bar);
-    
+    //gtk_widget_show(box);
     return bar;
     
 }
@@ -71,9 +77,10 @@ void set_notebook(GtkWidget* notebook, char* file_name, char* path_name) {
             gtk_container_add(GTK_CONTAINER(scrolled), source_view);
             title = create_tab(basename, (GtkNotebook*)notebook, scrolled);
 
-            g_signal_connect(source_view, "key-press-event",  G_CALLBACK(on_key_press),       path  );
-            g_signal_connect(buffer,      "changed",          G_CALLBACK(on_modifying_file),   title );
-            g_signal_connect(buffer,      "modified-changed", G_CALLBACK(on_file_saved), title );
+            g_signal_connect(source_view, "key-press-event",   G_CALLBACK(on_key_press),        path  );
+            g_signal_connect(buffer,      "changed",           G_CALLBACK(on_modifying_file),   title   );
+            g_signal_connect(buffer,      "modified-changed",  G_CALLBACK(on_file_saved),       title   );
+            //g_signal_connect(buffer,      "begin-user-action", G_CALLBACK(save_file),           path    );
             
             g_free (contents);
             
@@ -87,7 +94,7 @@ void set_notebook(GtkWidget* notebook, char* file_name, char* path_name) {
 
 }
 
-gboolean on_key_press(GtkWidget* widget, GdkEventKey *event, gpointer path){
+gboolean on_key_press(GtkWidget* widget, GdkEventKey *event, gpointer user_data){
 
     GtkTextBuffer* buffer = gtk_text_view_get_buffer ((GtkTextView *)widget);    
     
@@ -97,24 +104,8 @@ gboolean on_key_press(GtkWidget* widget, GdkEventKey *event, gpointer path){
 
             if (event->state & GDK_CONTROL_MASK) {
 
-                GtkTextIter start, end;
-                GError* gerr = NULL;
-                bool res;
-
-                GString* text = (GString*)path;
-
-                gtk_text_buffer_get_start_iter (buffer, &start);
-                gtk_text_buffer_get_end_iter (buffer, &end);
-
-                char* content = gtk_text_buffer_get_text (buffer, &start, &end, false);
-                gtk_text_buffer_set_modified (buffer, false);
-                res = g_file_set_contents( text->str, content, -1, &gerr);
-                if (gerr) {
-                    g_critical ("Could not save file: %s\n", gerr->message);
-                    g_error_free(gerr);
-                    gerr = NULL;
-                }
-                
+                save_file(buffer, user_data); 
+                //gtk_text_buffer_end_user_action((GtkTextBuffer*)user_data);   
 
             } 
 
@@ -133,7 +124,6 @@ void on_modifying_file (GtkTextBuffer *buffer, gpointer data) {
         strcat(new_name, name );
         gtk_label_set_text((GtkLabel*)data,new_name);
     }
-    //printf("buffer changed %s\n", new_name);
 
 }
 
@@ -142,9 +132,69 @@ void on_file_saved (GtkTextBuffer *textbuffer, gpointer user_data) {
     const char* name = gtk_label_get_text((GtkLabel*)user_data);
     if(name[0] == '*'){
         *name++;
-        //printf("modified: %s\n", name);
         gtk_label_set_text((GtkLabel*)user_data, name);
     }
+
+}
+
+
+void on_save_button_clicked(GtkWidget* widget, gpointer user_data) {
+    //gtk_text_buffer_end_user_action((GtkTextBuffer*)user_data);
+    printf("saving\n");
+}
+
+
+void save_file(GtkTextBuffer* buffer, gpointer user_data) {
+    GtkTextIter start, end;
+    GError* gerr = NULL;
+    bool res;
+
+    GString* text = (GString*)user_data;
+
+    gtk_text_buffer_get_start_iter (buffer, &start);
+    gtk_text_buffer_get_end_iter (buffer, &end);
+
+    char* content = gtk_text_buffer_get_text (buffer, &start, &end, false);
+    gtk_text_buffer_set_modified (buffer, false);
+    res = g_file_set_contents( text->str, content, -1, &gerr);
+    if (gerr) {
+        g_critical ("Could not save file: %s\n", gerr->message);
+        g_error_free(gerr);
+        gerr = NULL;
+    }
+}
+
+
+GtkWidget* create_tab(const gchar* title, GtkNotebook* notebook, GtkWidget* scrolled) {
+
+    GtkWidget* box, *title_label, *close_label;
+
+    close_label = gtk_button_new_from_icon_name ("window-close-symbolic", GTK_ICON_SIZE_MENU);
+    title_label = gtk_label_new(title);
+    box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+
+    gtk_widget_show(close_label);
+    gtk_widget_show(title_label);
+
+    gtk_container_add((GtkContainer*)box, title_label);
+    gtk_container_add((GtkContainer*)box, close_label);
+
+    gint pos = gtk_notebook_append_page (GTK_NOTEBOOK(notebook), scrolled, box);
+    if(pos < 0){ g_printf("notebook fails.\n"); }
+
+    gtk_notebook_set_current_page ((GtkNotebook *)notebook, pos);
+    g_signal_connect(close_label, "clicked", G_CALLBACK(close_tab), scrolled );
+    gtk_widget_show(box);
+
+    return title_label;
+
+}
+
+void close_tab (GtkButton *button, gpointer notebook_child) {
+
+    GtkWidget* notebook = gtk_widget_get_parent ((GtkWidget*)notebook_child);
+    int num = gtk_notebook_page_num ((GtkNotebook*)notebook, (GtkWidget*)notebook_child);
+    gtk_notebook_remove_page ((GtkNotebook*)notebook, num);
 
 }
 
@@ -172,48 +222,8 @@ void setting_buffer(GtkSourceBuffer* buffer, GtkWidget* source_view, char* locat
     
     gtk_source_view_set_show_line_numbers ((GtkSourceView*)source_view, TRUE);
     gtk_source_view_set_highlight_current_line ((GtkSourceView*)source_view, TRUE);
+    gtk_source_view_set_show_line_marks ((GtkSourceView *)source_view, true);
 
     g_free(content_type);
-
-}
-
-void on_save_button_clicked(GtkTextBuffer* buffer, GString* location) {
-    //gint page = gtk_notebook_get_current_page ((GtkNotebook *)notebook);
-    //GtkWidget* scrolled = gtk_notebook_get_nth_page ((GtkNotebook *)notebook, page);
-    //gtk_scrolled_window_
-    //printf("save %d\n", page);
-}
-
-
-GtkWidget* create_tab(const gchar* title, GtkNotebook* notebook, GtkWidget* scrolled) {
-
-    GtkWidget* box, *title_label, *close_label;
-
-    close_label = gtk_button_new_from_icon_name ("window-close-symbolic", GTK_ICON_SIZE_MENU);
-    title_label = gtk_label_new(title);
-    box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
-
-    gtk_widget_show(close_label);
-    gtk_widget_show(title_label);
-
-    gtk_container_add((GtkContainer*)box, title_label);
-    gtk_container_add((GtkContainer*)box, close_label);
-
-    gint pos = gtk_notebook_append_page (GTK_NOTEBOOK(notebook), scrolled, box);
-    if(pos < 0){ g_printf("notebook fails.\n"); }
-
-    gtk_notebook_set_current_page ((GtkNotebook *)notebook, pos);
-    g_signal_connect(close_label, "clicked", G_CALLBACK(close_tab), scrolled );
-    gtk_widget_show(box);
-
-    return title_label;
-
-}
-
-void close_tab (GtkButton *button, gpointer notebook_child) {
-
-    GtkWidget* notebook = gtk_widget_get_parent ((GtkWidget*)notebook_child);
-    int num = gtk_notebook_page_num ((GtkNotebook*)notebook, (GtkWidget*)notebook_child);
-    gtk_notebook_remove_page ((GtkNotebook*)notebook, num);
 
 }

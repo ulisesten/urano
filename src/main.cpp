@@ -23,6 +23,7 @@ void on_open_folder_button_clicked(GtkWidget* widget, gpointer data);
 int main( int argc, char** argv ){
 
     GtkBuilder*       builder;
+    GtkWidget*        header;
     GtkWidget*        window;
     GtkWidget*        window_controls;
     GtkCssProvider*   css_provider;
@@ -38,6 +39,7 @@ int main( int argc, char** argv ){
     GtkWidget*        sidebar_button;
     GtkWidget*        notebook_container;
     GtkWidget*        notebook;
+    GtkWidget*        tree_view;
     GtkTreeSelection* selection;
     GtkWidget*        sidebar;
     GError*           err          = NULL;
@@ -66,7 +68,7 @@ int main( int argc, char** argv ){
         err = NULL;
     }
 
-    gtk_style_context_add_provider_for_screen(gdk_display_get_default_screen(display), GTK_STYLE_PROVIDER( css_provider ), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    gtk_style_context_add_provider_for_screen(gdk_display_get_default_screen(display), (GtkStyleProvider*)css_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
     
     g_object_unref(css_provider);
 
@@ -82,10 +84,12 @@ int main( int argc, char** argv ){
     notebook_container = GTK_WIDGET(gtk_builder_get_object(builder, "notebook_container"  ));
     save_button        = GTK_WIDGET(gtk_builder_get_object(builder, "save_btn"            ));
     open_folder_button = GTK_WIDGET(gtk_builder_get_object(builder, "open_folder_btn"     ));
+    tree_view          = GTK_WIDGET(gtk_builder_get_object(builder, "tree_view"           ));
 
-    selection          = create_file_explorer( builder);
-    notebook           = create_notebook(      builder);
-                         create_terminal(      terminal_container);
+    //selection          = create_file_explorer(  builder);
+    selection  = gtk_tree_view_get_selection ((GtkTreeView*)tree_view);
+    notebook           = create_notebook(      &header);
+                         create_terminal(       terminal_container);
 
     gtk_tree_selection_set_select_function(selection, attach_notebook_to_selection, notebook, NULL);
     gtk_container_add(GTK_CONTAINER(notebook_container), notebook);
@@ -95,10 +99,11 @@ int main( int argc, char** argv ){
     g_signal_connect(toggle_search,      "toggled", G_CALLBACK(on_toggle_search_clicked),       search_bar);
     g_signal_connect(terminal_button,    "toggled", G_CALLBACK(on_terminal_button_clicked),     terminal_revealer);
     g_signal_connect(sidebar_button,     "toggled", G_CALLBACK(on_toggle_sidebar_clicked),      sidebar);
-    g_signal_connect(save_button,        "clicked", G_CALLBACK(on_save_button_clicked),         notebook);
-    g_signal_connect(open_folder_button, "clicked", G_CALLBACK(on_open_folder_button_clicked),  NULL);
-    
-    gtk_builder_connect_signals(       builder,  NULL);
+    g_signal_connect(open_folder_button, "clicked", G_CALLBACK(on_open_folder_button_clicked),  tree_view);
+
+    //gtk_window_set_titlebar((GtkWindow*)window, header);
+
+    gtk_builder_connect_signals( builder, NULL);
     gtk_widget_show(notebook);
     gtk_widget_show(window);
     g_object_unref(builder);
@@ -123,17 +128,20 @@ void on_open_folder_button_clicked(GtkWidget* widget, gpointer data) {
     res = gtk_dialog_run((GtkDialog*)folder_chooser);
     if (res)
     {
-        //char[] filename;
-        char* filename = gtk_file_chooser_get_uri((GtkFileChooser*)folder_chooser);
-        //open_file (filename);
-        printf("open folder %s\n", filename);
-        g_free (filename);
+
+        char* working_dir = gtk_file_chooser_get_filename((GtkFileChooser*)folder_chooser);
+        printf("open folder %s\n", working_dir);
+        
+        create_file_explorer((GtkTreeView*)data, working_dir);
+
+        g_free (working_dir);
+
     } else {
         printf("open folder: something went wrong\n");
     }
 
-    //printf("open folder\n");
     gtk_widget_destroy (folder_chooser);
+
 }
 
 void get_window_position(GtkWindow *window, GtkWidget* header){

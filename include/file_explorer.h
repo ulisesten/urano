@@ -18,7 +18,7 @@ typedef struct {
     GtkTreeSelection       * selection;
     GdkPixbuf              * pixbuf_folder;
     GdkPixbuf              * pixbuf_text_file;
-} file_browser;
+} File_browser;
 
 enum {
   COLUMN_PIXBUF,
@@ -27,11 +27,11 @@ enum {
 };
 
 GtkTreeSelection*
-     create_file_explorer(   GtkBuilder         *builder);
-void setup_file_explorer(    GtkTreeViewColumn  *column,      file_browser fBrowser);
-void initialize_tree_store(  file_browser* fb, GtkTreeIter * iter);
-void fill_tree_store(        PATH paths,    GtkTreeIter* iter, GtkTreeIter* parent, file_browser fb, int indent);
-void set_tree_view(          file_browser        f_browser);
+     create_file_explorer(   GtkTreeView*        tree_view, char* working_dir);
+void setup_file_explorer(    GtkTreeViewColumn*  column,      File_browser fb, char* working_dir);
+void initialize_tree_store(  File_browser*       fb,          GtkTreeIter* iter);
+void fill_tree_store(        PATH                paths,       GtkTreeIter* iter, GtkTreeIter* parent, File_browser fb, int indent);
+void set_tree_view(          File_browser        fb);
 gboolean
      attach_notebook_to_selection (   GtkTreeSelection   *selection,
                              GtkTreeModel       *model,
