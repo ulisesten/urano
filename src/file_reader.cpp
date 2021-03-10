@@ -45,9 +45,11 @@ void set_notebook(GtkWidget* notebook, char* file_name, char* path_name) {
     bool             contents_loaded = false;
 
     strcpy(location, path_name);
+    strcat(location,"/");
     strcat(location,file_name);
 
     file = g_file_new_for_path(location);
+    
     if(file){
 
         basename = g_path_get_basename(file_name);
@@ -223,6 +225,8 @@ void setting_buffer(GtkSourceBuffer* buffer, GtkWidget* source_view, char* locat
     gtk_source_view_set_show_line_numbers ((GtkSourceView*)source_view, TRUE);
     gtk_source_view_set_highlight_current_line ((GtkSourceView*)source_view, TRUE);
     gtk_source_view_set_show_line_marks ((GtkSourceView *)source_view, true);
+
+    //gtk_source_view_set_indent_width ((GtkSourceView *)source_view, 4);
 
     g_free(content_type);
 

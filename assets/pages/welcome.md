@@ -4,5 +4,5 @@
 
 ## TODO
 
-### function to open folder (done)
-### creating project functions
+function to open folder (done)
+creating project functions

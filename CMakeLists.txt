@@ -2,12 +2,12 @@ cmake_minimum_required(VERSION 3.1)
 
 
 #set project name
-project(ram)
+project(urano)
 
 #create a src variable with a link to all cpp files to compile
 set(SRC
     src/main.cpp
-    src/file_explorer.cpp
+    src/file_browser.cpp
     src/file_reader.cpp
     src/utils.cpp
     src/terminal_emulator.cpp
@@ -41,10 +41,10 @@ link_directories(${SOURCE_VIEW_LIBRARY_DIRS})
 add_definitions(${SOURCE_VIEW_CFLAGS_OTHER})
 
 
-add_executable(ram ${SRC})
+add_executable(urano ${SRC})
 
 #link .h files
-target_include_directories(ram
+target_include_directories(urano
     PRIVATE
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/glade
@@ -53,6 +53,6 @@ target_include_directories(ram
 )
 
 #link libs
-    target_link_libraries(ram ${GTK3_LIBRARIES})
-    target_link_libraries(ram ${VTE_LIBRARIES})
-    target_link_libraries(ram ${SOURCE_VIEW_LIBRARIES})
+    target_link_libraries(urano ${GTK3_LIBRARIES})
+    target_link_libraries(urano ${VTE_LIBRARIES})
+    target_link_libraries(urano ${SOURCE_VIEW_LIBRARIES})

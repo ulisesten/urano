@@ -1,4 +1,4 @@
-#include "file_explorer.h"
+#include "file_browser.h"
 #include "file_reader.h"
 #include "terminal_emulator.h"
 
@@ -44,17 +44,20 @@ int main( int argc, char** argv ){
     GtkWidget*        sidebar;
     GError*           err          = NULL;
     GFile*            theme_file   = NULL;
-    const gchar*      stylefile    = "./css/theme.css";
+
+    const gchar*      stylefile    = "../css/theme.css";
+    const gchar*      formfile     = "../glade/ui.glade";
+    const gchar*      iconfile     = "../assets/urano_icon2.jpg";
 
     gtk_init(&argc, &argv);
 
     builder      = gtk_builder_new();
     css_provider = gtk_css_provider_new();
     display      = gdk_display_get_default();
-    theme_file   = g_file_new_for_path("../css/theme.css");
+    theme_file   = g_file_new_for_path(stylefile);
 
 
-    gtk_builder_add_from_file ( builder, "../glade/ui.glade", &err );
+    gtk_builder_add_from_file ( builder, formfile, &err );
     if(err){
         fprintf(stderr, ("Failed to load builder: %s\n"), err->message);
         g_error_free(err);
@@ -70,7 +73,6 @@ int main( int argc, char** argv ){
 
     gtk_style_context_add_provider_for_screen(gdk_display_get_default_screen(display), (GtkStyleProvider*)css_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
     
-    g_object_unref(css_provider);
 
     window             = GTK_WIDGET(gtk_builder_get_object(builder, "window"              ));
     main_box           = GTK_WIDGET(gtk_builder_get_object(builder, "main_box"            ));
@@ -86,8 +88,8 @@ int main( int argc, char** argv ){
     open_folder_button = GTK_WIDGET(gtk_builder_get_object(builder, "open_folder_btn"     ));
     tree_view          = GTK_WIDGET(gtk_builder_get_object(builder, "tree_view"           ));
 
-    //selection          = create_file_explorer(  builder);
-    selection  = gtk_tree_view_get_selection ((GtkTreeView*)tree_view);
+
+    selection  = gtk_tree_view_get_selection ( (GtkTreeView*)tree_view);
     notebook           = create_notebook(      &header);
                          create_terminal(       terminal_container);
 
@@ -102,11 +104,16 @@ int main( int argc, char** argv ){
     g_signal_connect(open_folder_button, "clicked", G_CALLBACK(on_open_folder_button_clicked),  tree_view);
 
     //gtk_window_set_titlebar((GtkWindow*)window, header);
+    gtk_window_set_icon_from_file((GtkWindow*)window, iconfile, NULL);
 
     gtk_builder_connect_signals( builder, NULL);
     gtk_widget_show(notebook);
     gtk_widget_show(window);
+
     g_object_unref(builder);
+    g_object_unref(theme_file);
+    g_object_unref(css_provider);
+
     gtk_main();
 
     return 0;

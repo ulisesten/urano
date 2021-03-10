@@ -1,4 +1,4 @@
-#include "file_explorer.h"
+#include "file_browser.h"
 
 
 GtkTreeSelection* create_file_explorer(GtkTreeView* tv, char* working_dir){
@@ -6,9 +6,7 @@ GtkTreeSelection* create_file_explorer(GtkTreeView* tv, char* working_dir){
     File_browser  fb;
     GtkIconTheme *icon_theme;
 
-    //fb.tree_view  = (GtkTreeView*)gtk_builder_get_object(builder, "tree_view");
     fb.tree_view  = tv;
-    //fb.selection  = gtk_tree_view_get_selection (fb.tree_view);
     fb.column     = gtk_tree_view_column_new    ();
 
     fb.renderer   = gtk_cell_renderer_pixbuf_new();
@@ -43,6 +41,8 @@ GtkTreeSelection* create_file_explorer(GtkTreeView* tv, char* working_dir){
     g_object_unref(fb.pixbuf_folder);
     g_object_unref(fb.pixbuf_text_file);
 
+    /**We return selection so
+     * we can attach it to another widget*/
     return (fb.selection);
 
 }
@@ -52,23 +52,27 @@ void setup_file_explorer(GtkTreeViewColumn* column, File_browser fb, char* worki
     GError* gerr;
     gint pos = 0;
     GtkTreeIter iter, iter_child;
-    gchar* folder_name;
-    //char* cwd = g_get_current_dir();
+    gchar* project_name;
     PATH paths = NULL;
     int list_err = -1;
     
+    /**paths is a list that contains all the info
+     * to fill tree_store as the model to treeview*/
     list_err = filling_list(&paths, working_dir);
-    if(list_err < 0 )
+    if(list_err < 0 ) {
         printf("error al llenar lista.\n");
+    }
 
-    folder_name = g_path_get_basename(working_dir);
-    gtk_tree_view_column_set_title(fb.column, folder_name);
+    project_name = g_path_get_basename(working_dir);
 
-    initialize_tree_store(&fb, &iter);
+    initialize_tree_store(&fb, &iter, project_name);
+
     fill_tree_store(paths, &iter, NULL, fb, 0);
     
     set_tree_view(fb);
-    free(paths);
+
+    if(paths)
+        free(paths);
 
 }
 
@@ -81,7 +85,10 @@ void set_tree_view(File_browser fb){
 }
 
 
-void initialize_tree_store(  File_browser* fb, GtkTreeIter * iter){
+void initialize_tree_store(  File_browser* fb, GtkTreeIter * iter, char* project_name){
+    /**This only adds a first empty row in the treeview
+     * and the tree title */
+    gtk_tree_view_column_set_title(fb->column, project_name);
     gtk_tree_store_append(fb->tree_store, &(*iter), NULL);
 }
 
@@ -98,7 +105,7 @@ void fill_tree_store(PATH paths, GtkTreeIter* iter, GtkTreeIter* parent, File_br
 
             bool branched = false;
             if( paths->branch ) {
-                //printf("branch in %s\n", paths->dir);
+
                 gtk_tree_store_append(fb.tree_store, &new_iter, iter);
                 branched = true;
                 fill_tree_store( paths->branch , &new_iter, iter, fb, indent+1);
@@ -139,7 +146,7 @@ gboolean attach_notebook_to_selection (GtkTreeSelection *selection, GtkTreeModel
 
     if (gtk_tree_model_get_iter(model, &iter, path))
     {
-        gchar *name;
+        gchar *name = NULL;
         gchar *location = NULL;
 
         gtk_tree_model_get(model, &iter, COLUMN_STRING, &name, COLUMN_PATH, &location, -1);
@@ -147,7 +154,7 @@ gboolean attach_notebook_to_selection (GtkTreeSelection *selection, GtkTreeModel
         if(location){
             if(!path_currently_selected){
 
-                strcat(location,"/");
+                //strcat(location,"/");
                 set_notebook(notebook, name, location);
 
             }
@@ -156,6 +163,7 @@ gboolean attach_notebook_to_selection (GtkTreeSelection *selection, GtkTreeModel
         }
 
         g_free(name);
+        g_free(location);
 
     }
 

@@ -1,5 +1,5 @@
-#ifndef __FILE_EXPLORER__
-#define __FILE_EXPLORER__
+#ifndef __FILE_BROWSER__
+#define __FILE_BROWSER__
 
 #include <stdio.h>
 #include <gtk/gtk.h>
@@ -29,7 +29,7 @@ enum {
 GtkTreeSelection*
      create_file_explorer(   GtkTreeView*        tree_view, char* working_dir);
 void setup_file_explorer(    GtkTreeViewColumn*  column,      File_browser fb, char* working_dir);
-void initialize_tree_store(  File_browser*       fb,          GtkTreeIter* iter);
+void initialize_tree_store(  File_browser*       fb,          GtkTreeIter* iter, char* project_name);
 void fill_tree_store(        PATH                paths,       GtkTreeIter* iter, GtkTreeIter* parent, File_browser fb, int indent);
 void set_tree_view(          File_browser        fb);
 gboolean

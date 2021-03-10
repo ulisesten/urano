@@ -1,24 +1,11 @@
-textview#text {
-    background-color: #000;
-    color: #fff;
-}
-
-
-
-textview#side_view {
-    background-color: #21252b;
-    color: #fff;
-}
-
-textview {
-    border-style: none;
-}
-
 treeview {
-    /*border-right-style: solid;
-    border-right-width: 1px;
-    border-right-color: #000;*/
+    background-color: transparent;
     padding: 0px;
+}
+
+box {
+    border-style: solid;
+    border-color: #242424;
 }
 
 label {
@@ -33,14 +20,40 @@ button {
 }
 
 headerbar {
-    border-bottom-style: none;
-    /*background-color: transparent;
+    border-style: none;
+    /*border-color: #242424;
+    background-color: transparent;
     border-bottom-width: 1px;
     border-bottom-color: transparent;
     margin: 0px;*/
 }
 
 tab {
-    background-color: #121212;
+    background-color: #242424;
+    border-radius: 5px 5px 0 0;
 }
+
+notebook {
+    border-style: solid;
+    border-color: #242424;
+    border-bottom-color: black;
+    border-width: 1px;
+}
+
+tabs {
+    border-style: solid;
+    border-color: #242424;
+}
+
+.scrolled {
+    border-style: solid;
+    border-color: #242424;
+    background-color: #242424;
+}
+
+.background {
+    border-style: solid;
+    border-color: #242424;
+}
+
 
