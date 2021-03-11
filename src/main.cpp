@@ -1,11 +1,14 @@
 #include "file_browser.h"
 #include "file_reader.h"
 #include "terminal_emulator.h"
+#include "project_handler.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <unistd.h>
+
+void configure_project(GtkWidget* tree_view);
 
 static void on_quit_btn_clicked(          GtkWidget          *widget,    gpointer     data);
 static void on_toggle_search_clicked(     GtkToggleButton    *source,    gpointer     data);
@@ -48,6 +51,7 @@ int main( int argc, char** argv ){
     const gchar*      stylefile    = "../css/theme.css";
     const gchar*      formfile     = "../glade/ui.glade";
     const gchar*      iconfile     = "../assets/urano_icon2.jpg";
+    
 
     gtk_init(&argc, &argv);
 
@@ -93,6 +97,12 @@ int main( int argc, char** argv ){
     notebook           = create_notebook(      &header);
                          create_terminal(       terminal_container);
 
+
+    
+    configure_project(tree_view);
+
+    
+
     gtk_tree_selection_set_select_function(selection, attach_notebook_to_selection, notebook, NULL);
     gtk_container_add(GTK_CONTAINER(notebook_container), notebook);
 
@@ -120,6 +130,23 @@ int main( int argc, char** argv ){
 
 }
 
+void configure_project(GtkWidget* tree_view){
+    char*             project_path = NULL;
+
+    get_project_path(&project_path);
+    if( project_path ) {
+
+        printf("%s\n", project_path);
+        create_file_explorer((GtkTreeView*)tree_view, project_path);
+
+    } else {
+        printf("No recent project\n");
+    }
+
+}
+
+
+
 void on_open_folder_button_clicked(GtkWidget* widget, gpointer data) {
     GtkWidget* folder_chooser;
     bool res;
@@ -131,15 +158,14 @@ void on_open_folder_button_clicked(GtkWidget* widget, gpointer data) {
                              "_Open", GTK_RESPONSE_ACCEPT,
                              NULL);
 
-    //gtk_widget_show(folder_chooser);
     res = gtk_dialog_run((GtkDialog*)folder_chooser);
     if (res)
     {
 
         char* working_dir = gtk_file_chooser_get_filename((GtkFileChooser*)folder_chooser);
-        printf("open folder %s\n", working_dir);
-        
+        //printf("open folder %s\n", working_dir);
         create_file_explorer((GtkTreeView*)data, working_dir);
+        set_project_path(working_dir);
 
         g_free (working_dir);
 

@@ -10,6 +10,7 @@ set(SRC
     src/file_browser.cpp
     src/file_reader.cpp
     src/utils.cpp
+    src/project_handler.cpp
     src/terminal_emulator.cpp
 )
 
