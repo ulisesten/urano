@@ -1,7 +1,7 @@
 CMakeLists.txt.user
 CMakeCache.txt
 .vscode
-build
+build/
 CMakeFiles
 CMakeScripts
 Testing

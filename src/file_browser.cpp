@@ -6,6 +6,12 @@ GtkTreeSelection* create_file_explorer(GtkTreeView* tv, char* working_dir){
     File_browser  fb;
     GtkIconTheme *icon_theme;
 
+    if( gtk_tree_view_get_n_columns (tv) > 0) {
+        //printf("Treeview not empty\nClearing..\n");
+        gtk_tree_view_remove_column (tv, gtk_tree_view_get_column (tv,0));
+
+    }
+
     fb.tree_view  = tv;
     fb.column     = gtk_tree_view_column_new    ();
 
