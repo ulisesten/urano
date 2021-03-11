@@ -2,6 +2,7 @@ CMakeLists.txt.user
 CMakeCache.txt
 .vscode
 build/
+.urano/
 CMakeFiles
 CMakeScripts
 Testing
