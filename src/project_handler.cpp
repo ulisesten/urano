@@ -15,9 +15,9 @@ void get_project_path(char** project_path) {
         fscanf(fptr, "%s", *project_path);
 
 
+        fclose(fptr);
     }
         
-    fclose(fptr);
 
 }
 
@@ -38,8 +38,8 @@ void  set_project_path(char* path_name) {
 
         fprintf(fptr, "%s", path_name);
 
+        fclose(fptr);
     }
         
-    fclose(fptr);
 
 }
