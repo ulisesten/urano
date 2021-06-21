@@ -16,7 +16,7 @@
                                     .blue = CLR_16(CLR_B(x)), \
                                     .alpha = 0 }
 */
-void create_terminal(         GtkWidget      *container);
+void create_terminal(         GtkWidget      *container, char* project_path);
 static void on_terminal_get_entry(   VteTerminal    *terminal,     gchar      *text,      guint     size,      gpointer  user_data);
 static void child_ready(             VteTerminal    *terminal,     GPid        pid,       GError   *error,     gpointer  user_data);
 

@@ -4,5 +4,6 @@
 
 ## TODO
 
-function to open folder (done)
-creating project functions
+* function to open folder (done)
+* create project functions (done)
+* create functions to rename folders and files

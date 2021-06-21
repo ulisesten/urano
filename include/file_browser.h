@@ -10,7 +10,7 @@
 
 typedef struct {
     GtkTreeView            * tree_view = NULL;
-    GtkListStore           * list_store;
+    //GtkListStore           * list_store;
     GtkTreeStore           * tree_store;
     GtkTreeViewColumn      * column    = NULL;
     GtkCellRenderer        * renderer;

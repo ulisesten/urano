@@ -66,7 +66,7 @@
 
   <!-- Global Settings -->
   <style name="text"                        foreground="aluminium3" background="background1"/>
-  <style name="selection"                   foreground="skyblue2"   background="aluminium6-5-blend"/>
+  <style name="selection"                   foreground="aluminium4" background="aluminium6-5-blend"/>
   <style name="cursor"                      foreground="aluminium2"/>
   <style name="secondary-cursor"            foreground="aluminium4-3-blend"/>
   <style name="current-line"                background="aluminium5"/>
@@ -85,7 +85,7 @@
   <style name="search-match"                foreground="aluminium1" background="chameleon3"/>
 
   <!-- Comments -->
-  <style name="def:comment"                 foreground="aluminium6"/>
+  <style name="def:comment"                 foreground="aluminium4"/>
   <style name="def:shebang"                 foreground="aluminium4" bold="true"/>
   <style name="def:doc-comment-element"     italic="true"/>
 

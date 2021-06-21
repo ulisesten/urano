@@ -36,7 +36,8 @@
             "cppStandard": "gnu++14",
             "intelliSenseMode": "gcc-x64",
             "compilerArgs": [],
-            "compileCommands": ""
+            "compileCommands": "",
+            "configurationProvider": "go2sh.cmake-integration"
         }
     ],
     "version": 4

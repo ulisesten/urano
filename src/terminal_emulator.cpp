@@ -1,9 +1,9 @@
 #include "terminal_emulator.h"
 
-void create_terminal(GtkWidget* container){
+void create_terminal(GtkWidget* container, char* project_path){
 
     GtkWidget   * terminal = vte_terminal_new ();
-    gchar       * cwd      = g_get_current_dir();
+    //gchar       * cwd      = g_get_current_dir();
     GdkRGBA       foreground;
     GdkRGBA       background;
     //GdkRGBA       bold;
@@ -17,7 +17,7 @@ void create_terminal(GtkWidget* container){
     
     vte_terminal_spawn_async(VTE_TERMINAL(terminal),
         VTE_PTY_DEFAULT,
-        cwd,         /* working directory  */
+        project_path, /* working directory  */
         command,      /* command */
         NULL,         /* environment */
         (GSpawnFlags)0, /* spawn flags */

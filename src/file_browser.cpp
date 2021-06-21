@@ -2,9 +2,9 @@
 
 
 GtkTreeSelection* create_file_explorer(GtkTreeView* tv, char* working_dir){
-    GError       *error = NULL;
     File_browser  fb;
     GtkIconTheme *icon_theme;
+    GError       *error = NULL;
 
     if( gtk_tree_view_get_n_columns (tv) > 0) {
         gtk_tree_view_remove_column (tv, gtk_tree_view_get_column (tv,0));
@@ -141,33 +141,51 @@ void fill_tree_store(PATH paths, GtkTreeIter* iter, GtkTreeIter* parent, File_br
 }
 
 
-gboolean attach_notebook_to_selection (GtkTreeSelection *selection, GtkTreeModel *model
-                            , GtkTreePath      *path     , gboolean path_currently_selected
-                            , gpointer          userdata ) {
+gboolean attach_notebook_to_selection (
+             GtkTreeSelection *selection
+           , GtkTreeModel     *model
+           , GtkTreePath      *path
+           , gboolean          path_currently_selected
+           , gpointer          userdata
+        ) {
 
     GtkTreeIter iter;
     GtkWidget* notebook = (GtkWidget*) userdata;
 
-    if (gtk_tree_model_get_iter(model, &iter, path))
-    {
-        gchar *name = NULL;
+    if (gtk_tree_model_get_iter(model, &iter, path)) {
+
+        gchar *name     = NULL;
         gchar *location = NULL;
+        gchar *type     = NULL;
 
         gtk_tree_model_get(model, &iter, COLUMN_STRING, &name, COLUMN_PATH, &location, -1);
 
         if(location){
+
             if(!path_currently_selected){
 
-                //strcat(location,"/");
-                set_notebook(notebook, name, location);
+                if(g_str_has_suffix (name, ".png")) {
+
+                    printf("PNG image\n");
+
+                } else {
+
+                    set_notebook(notebook, name, location);
+
+                }
+
 
             }
+
         } else {
+
             printf("no location\n");
+
         }
 
         g_free(name);
         g_free(location);
+        g_free(type);
 
     }
 

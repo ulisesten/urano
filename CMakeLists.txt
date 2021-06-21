@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
 
-
 #set project name
 project(urano)
 
@@ -13,9 +12,6 @@ set(SRC
     src/project_handler.cpp
     src/terminal_emulator.cpp
 )
-
-#Sourceview packages
-#find_package(gtksourceview-4 REQUIRED)
 
 #GTK packages
 find_package(PkgConfig REQUIRED)
@@ -42,10 +38,10 @@ link_directories(${SOURCE_VIEW_LIBRARY_DIRS})
 add_definitions(${SOURCE_VIEW_CFLAGS_OTHER})
 
 
-add_executable(urano ${SRC})
+add_executable(${PROJECT_NAME} ${SRC})
 
 #link .h files
-target_include_directories(urano
+target_include_directories(${PROJECT_NAME}
     PRIVATE
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/glade
@@ -54,6 +50,6 @@ target_include_directories(urano
 )
 
 #link libs
-    target_link_libraries(urano ${GTK3_LIBRARIES})
-    target_link_libraries(urano ${VTE_LIBRARIES})
-    target_link_libraries(urano ${SOURCE_VIEW_LIBRARIES})
+    target_link_libraries(${PROJECT_NAME} ${GTK3_LIBRARIES})
+    target_link_libraries(${PROJECT_NAME} ${VTE_LIBRARIES})
+    target_link_libraries(${PROJECT_NAME} ${SOURCE_VIEW_LIBRARIES})

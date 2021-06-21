@@ -10,23 +10,19 @@ void get_project_path(char** project_path) {
         
     } else {
 
-        //printf("File open\n");
         *project_path = (char*)malloc(sizeof(char*));
         fscanf(fptr, "%s", *project_path);
-
-
         fclose(fptr);
+
     }
         
-
 }
-
-
 
 
 void  set_project_path(char* path_name) {
     FILE *fptr = NULL;
 
+    /**this will change to home folder*/
     int result = mkdir("../.urano", 0777);
     fptr = fopen("../.urano/project_info.txt", "w");
 
@@ -37,9 +33,8 @@ void  set_project_path(char* path_name) {
     } else {
 
         fprintf(fptr, "%s", path_name);
-
         fclose(fptr);
+
     }
         
-
 }

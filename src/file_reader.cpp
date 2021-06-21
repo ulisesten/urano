@@ -209,8 +209,7 @@ void setting_buffer(GtkSourceBuffer* buffer, GtkWidget* source_view, char* locat
     gchar*                         content_type;
 
     content_type = g_content_type_guess ((char*)location, NULL, 0, &result_uncertain);
-    if (result_uncertain)
-    {
+    if (result_uncertain) {
         g_free (content_type);
         content_type = NULL;
     }
@@ -220,13 +219,13 @@ void setting_buffer(GtkSourceBuffer* buffer, GtkWidget* source_view, char* locat
 
     gtk_source_style_scheme_manager_set_search_path( styleSchemeMng ,  dirs);
     gtk_source_buffer_set_style_scheme (buffer, gtk_source_style_scheme_manager_get_scheme(styleSchemeMng, "oblivion2"));
-    gtk_source_view_set_show_line_marks ((GtkSourceView *)source_view,TRUE);
     
-    gtk_source_view_set_show_line_numbers ((GtkSourceView*)source_view, TRUE);
-    gtk_source_view_set_highlight_current_line ((GtkSourceView*)source_view, TRUE);
-    gtk_source_view_set_show_line_marks ((GtkSourceView *)source_view, true);
-
-    //gtk_source_view_set_indent_width ((GtkSourceView *)source_view, 4);
+    gtk_text_view_set_monospace (                 (GtkTextView*)  source_view, true);
+    gtk_source_view_set_show_line_numbers (       (GtkSourceView*)source_view, true);
+    gtk_source_view_set_highlight_current_line (  (GtkSourceView*)source_view, true);
+    gtk_source_view_set_show_line_marks (         (GtkSourceView*)source_view, true);
+    gtk_source_view_set_smart_backspace (         (GtkSourceView*)source_view, true);
+    gtk_source_view_set_smart_home_end (          (GtkSourceView*)source_view, GTK_SOURCE_SMART_HOME_END_BEFORE);
 
     g_free(content_type);
 

@@ -8,7 +8,7 @@
 #include <gtk/gtk.h>
 #include <unistd.h>
 
-void configure_project(GtkWidget* tree_view);
+void configure_project(GtkWidget* tree_view, char* path);
 
 static void on_quit_btn_clicked(          GtkWidget          *widget,    gpointer     data);
 static void on_toggle_search_clicked(     GtkToggleButton    *source,    gpointer     data);
@@ -16,10 +16,6 @@ static void on_terminal_button_clicked(   GtkToggleButton    *widget,    gpointe
 static void on_toggle_sidebar_clicked(    GtkToggleButton    *source,    gpointer     data);
 
 /**to reallocate functions*/
-gboolean on_drag_window (GtkWidget *widget, GdkDragContext *context,
-                         int        x,      int             y,
-                         guint      time,   gpointer        user_data );
-
 void on_open_folder_button_clicked(GtkWidget* widget, gpointer data);
 
 
@@ -50,7 +46,7 @@ int main( int argc, char** argv ){
 
     const gchar*      stylefile    = "../css/theme.css";
     const gchar*      formfile     = "../glade/ui.glade";
-    const gchar*      iconfile     = "../assets/urano_icon2.jpg";
+    const gchar*      iconfile     = "../assets/icon.png";
     
 
     gtk_init(&argc, &argv);
@@ -95,11 +91,13 @@ int main( int argc, char** argv ){
 
     selection  = gtk_tree_view_get_selection ( (GtkTreeView*)tree_view);
     notebook           = create_notebook(      &header);
-                         create_terminal(       terminal_container);
 
+    char* project_path = NULL;
+    get_project_path(&project_path);
 
-    
-    configure_project(tree_view);
+    configure_project(  tree_view,          project_path);
+    create_terminal(    terminal_container ,project_path);
+
 
     
 
@@ -130,10 +128,8 @@ int main( int argc, char** argv ){
 
 }
 
-void configure_project(GtkWidget* tree_view){
-    char*             project_path = NULL;
+void configure_project(GtkWidget* tree_view, char* project_path){
 
-    get_project_path(&project_path);
     if( project_path ) {
 
         printf("%s\n", project_path);
@@ -163,7 +159,6 @@ void on_open_folder_button_clicked(GtkWidget* widget, gpointer data) {
     {
 
         char* working_dir = gtk_file_chooser_get_filename((GtkFileChooser*)folder_chooser);
-        //printf("open folder %s\n", working_dir);
         create_file_explorer((GtkTreeView*)data, working_dir);
         set_project_path(working_dir);
 
@@ -179,15 +174,6 @@ void on_open_folder_button_clicked(GtkWidget* widget, gpointer data) {
 
 void get_window_position(GtkWindow *window, GtkWidget* header){
     gtk_window_set_position (window, GTK_WIN_POS_MOUSE);
-}
-
-gboolean on_drag_window (GtkWidget *widget, GdkDragContext *context,
-                         int        x,      int             y,
-                         guint      time,   gpointer        user_data ) {
-
-    printf("motion\n");
-    return FALSE;
-
 }
 
 
