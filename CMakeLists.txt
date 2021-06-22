@@ -5,12 +5,12 @@ project(urano)
 
 #create a src variable with a link to all cpp files to compile
 set(SRC
-    src/main.cpp
-    src/file_browser.cpp
-    src/file_reader.cpp
-    src/utils.cpp
-    src/project_handler.cpp
-    src/terminal_emulator.cpp
+    src/main.cc
+    src/file_browser.cc
+    src/file_reader.cc
+    src/utils.cc
+    src/project_handler.cc
+    src/terminal_emulator.cc
 )
 
 #GTK packages
