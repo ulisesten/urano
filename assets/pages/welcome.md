@@ -1,4 +1,4 @@
-# URANO 0.3.03 Beta
+# URANO 0.3.03 Alpha
 
 # Welcome
 

@@ -139,7 +139,6 @@
         </child>
         <child>
           <object class="GtkRevealer" id="sidebar_revealer">
-            <property name="width_request">200</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="transition_type">slide-right</property>
@@ -201,7 +200,7 @@
                 <child>
                   <object class="GtkScrolledWindow">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
+                    <property name="can_focus">False</property>
                     <property name="shadow_type">in</property>
                     <child>
                       <object class="GtkTreeView" id="tree_view">
@@ -227,7 +226,7 @@
                   <object class="GtkLabel" id="app_name">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">URANO 0.2.26</property>
+                    <property name="label" translatable="yes">URANO</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

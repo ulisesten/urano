@@ -1,5 +1,0 @@
-#include "my_header.h"
-
-void imprime(){
-    printf("Hola cmake\n");
-}
