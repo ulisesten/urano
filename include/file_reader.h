@@ -5,11 +5,12 @@
 #include <gdk/gdkkeysyms.h>
 #include <glib/gprintf.h>
 #include <gtksourceview/gtksource.h>
+#include <stdbool.h>
 
 GtkWidget* create_notebook(          GtkWidget**        header  );
 GtkWidget* create_window_controls();
 void       set_notebook(             GtkWidget*         notebook,     char*          filename,    char*      path);
-void       on_save_button_clicked(   GtkTextBuffer*     buffer,       gpointer       user_data);
+//void       on_save_button_clicked(   GtkTextBuffer*     buffer,       gpointer       user_data);
 GtkWidget* create_tab(               const gchar*       title,        GtkNotebook*   notebook,    GtkWidget* scrolled);
 void       close_tab (               GtkButton*         button,       gpointer       user_data);
 void       setting_buffer(           GtkSourceBuffer*   buffer,       GtkWidget*     source_view, char*      location);

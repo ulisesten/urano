@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 void configure_project(GtkWidget* tree_view, char* path);
 

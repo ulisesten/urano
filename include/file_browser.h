@@ -1,18 +1,21 @@
 #ifndef __FILE_BROWSER__
 #define __FILE_BROWSER__
 
+#include "file_reader.h"
+#include "utils.h"
+
 #include <stdio.h>
 #include <gtk/gtk.h>
 #include <glib/gprintf.h>
 #include <glib.h>
-#include "file_reader.h"
-#include "utils.h"
+#include <stdbool.h>
+
 
 typedef struct {
-    GtkTreeView            * tree_view = NULL;
+    GtkTreeView            * tree_view;
     //GtkListStore           * list_store;
     GtkTreeStore           * tree_store;
-    GtkTreeViewColumn      * column    = NULL;
+    GtkTreeViewColumn      * column;
     GtkCellRenderer        * renderer;
     GtkTreeSelection       * selection;
     GdkPixbuf              * pixbuf_folder;
