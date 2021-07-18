@@ -6,7 +6,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
-void  get_project_path(char** project_path);
-void  set_project_path(char* path_name);
+char*  get_project_path();
+void   set_project_path(char* path_name);
 
 #endif

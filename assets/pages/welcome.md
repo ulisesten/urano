@@ -4,6 +4,7 @@
 
 ## TODO
 
-* function to open folder (done)
-* create project functions (done)
-* create functions to rename folders and files
+* Function to open folder (done)
+* Create project functions (done)
+* Create functions to rename folders and files
+* Embed gecko engine

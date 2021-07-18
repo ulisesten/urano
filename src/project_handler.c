@@ -1,7 +1,8 @@
 #include "project_handler.h"
 
-void get_project_path(char** project_path) {
+char* get_project_path() {
     FILE *fptr = NULL;
+    char* project_path;
 
     fptr = fopen("../.urano/project_info.txt", "r");
 
@@ -10,11 +11,13 @@ void get_project_path(char** project_path) {
         
     } else {
 
-        *project_path = (char*)malloc(sizeof(char*));
-        fscanf(fptr, "%s", *project_path);
+        project_path = (char*)malloc(sizeof(char*)* 200);
+        fscanf(fptr, "%s", project_path);
         fclose(fptr);
 
     }
+
+    return project_path;
         
 }
 

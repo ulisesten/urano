@@ -1,35 +1,17 @@
 #include "file_reader.h"
 
-GtkWidget* create_notebook(GtkWidget** header) {
+GtkWidget* create_notebook() {
 
     GtkWidget* notebook = gtk_notebook_new();
 
-    *header = create_window_controls();
-    
-    //gtk_notebook_set_scrollable ((GtkNotebook *)notebook, true);
-    //gtk_notebook_set_action_widget ((GtkNotebook *)notebook, *header, GTK_PACK_END);
-    set_notebook(notebook, (char*)"welcome.md", (char*)"../assets/pages/");
+    set_notebook(notebook, "welcome.md", "../assets/pages/");
 
     return notebook;
 
 }
 
-GtkWidget* create_window_controls() {
-    
-    //GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    GtkWidget *bar = gtk_header_bar_new ();
-    gtk_header_bar_set_show_close_button ((GtkHeaderBar *)bar, true);
-    gtk_header_bar_set_has_subtitle((GtkHeaderBar *)bar, false);
 
-    //gtk_container_add((GtkContainer*)box, bar);
-
-    gtk_widget_show(bar);
-    //gtk_widget_show(box);
-    return bar;
-    
-}
-
-void set_notebook(GtkWidget* notebook, char* file_name, char* path_name) {
+void set_notebook(GtkWidget* notebook, const char* file_name, const char* path_name) {
     GtkWidget*       scrolled;
     GtkWidget*       source_view;
     GtkWidget*       title;
@@ -60,7 +42,7 @@ void set_notebook(GtkWidget* notebook, char* file_name, char* path_name) {
 
         contents_loaded = g_file_load_contents (file, NULL, &contents, &length, NULL, &gErr);
         if (gErr) {
-            printf ("set_notebook(): Could not load content: %s\n", gErr->message);
+            printf("set_notebook(): Could not load content: %s\n", gErr->message);
             g_error_free(gErr);
             gErr = NULL;
         }
@@ -91,7 +73,7 @@ void set_notebook(GtkWidget* notebook, char* file_name, char* path_name) {
         g_free (basename);
 
     } else {
-        printf("set_notebook(): error opening file\n");
+        printf("%s: error opening file\n",__func__);
     }
 
 }

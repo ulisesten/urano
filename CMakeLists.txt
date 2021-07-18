@@ -13,12 +13,16 @@ set(SRC
     src/terminal_emulator.c
 )
 
-#GTK packages
+if(WIN32)
+    message(STATUS "Building for WIN32")
+endif(WIN32)
+
 find_package(PkgConfig REQUIRED)
-IF		(PKG_CONFIG_FOUND)
-	message(STATUS "Pkg config found")
+if(PKG_CONFIG_FOUND)
+message(STATUS "Pkg config found")
 endif 	(PKG_CONFIG_FOUND )
 
+#GTK packages
 pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 
 include_directories(${GTK3_INCLUDE_DIRS})
