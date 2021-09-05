@@ -1,5 +1,4 @@
-#include "file_browser.h"
-
+#include "file_tree_view.h"
 
 GtkTreeSelection* create_file_explorer(GtkTreeView* tv, char* working_dir){
     File_browser  fb;
@@ -150,7 +149,7 @@ gboolean attach_notebook_to_selection (
         ) {
 
     GtkTreeIter iter;
-    GtkWidget* notebook = (GtkWidget*) userdata;
+    GtkWidget*  notebook = (GtkWidget*) userdata;
 
     if (gtk_tree_model_get_iter(model, &iter, path)) {
 

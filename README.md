@@ -11,10 +11,10 @@ This project is focused on the screen space and memory optimization
 
 ## Running
 
-    //in build folder
+in build folder
+
     ./urano
 
 ## Dependencies
 
-    sudo apt install libgtksourceview-4-dev
-    sudo apt install libvte-2.91-dev
+    sudo apt install libgtksourceview-4-dev libvte-2.91-dev

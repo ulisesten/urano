@@ -1,10 +1,10 @@
-#include "file_reader.h"
+#include "notebook.h"
 
 GtkWidget* create_notebook() {
 
     GtkWidget* notebook = gtk_notebook_new();
 
-    set_notebook(notebook, "welcome.md", "../assets/pages/");
+    set_notebook(notebook, "welcome.urano", "../assets/pages/");
 
     return notebook;
 
@@ -64,7 +64,6 @@ void set_notebook(GtkWidget* notebook, const char* file_name, const char* path_n
             g_signal_connect(source_view, "key-press-event",   G_CALLBACK(on_key_press),        path  );
             g_signal_connect(buffer,      "changed",           G_CALLBACK(on_modifying_file),   title   );
             g_signal_connect(buffer,      "modified-changed",  G_CALLBACK(on_file_saved),       title   );
-            //g_signal_connect(buffer,      "begin-user-action", G_CALLBACK(save_file),           path    );
             
             g_free (contents);
             
@@ -89,7 +88,6 @@ gboolean on_key_press(GtkWidget* widget, GdkEventKey *event, gpointer user_data)
             if (event->state & GDK_CONTROL_MASK) {
 
                 save_file(buffer, user_data); 
-                //gtk_text_buffer_end_user_action((GtkTextBuffer*)user_data);   
 
             } 
 
@@ -183,6 +181,7 @@ void close_tab (GtkButton *button, gpointer notebook_child) {
 }
 
 void setting_buffer(GtkSourceBuffer* buffer, GtkWidget* source_view, char* location) {
+    
     GtkSourceLanguage*             lang             = NULL;
     GtkSourceLanguageManager*      manager          = gtk_source_language_manager_new ();
     GtkSourceStyleSchemeManager*   styleSchemeMng   = gtk_source_style_scheme_manager_new ();

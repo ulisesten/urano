@@ -5,12 +5,12 @@ project(urano)
 
 #create a src variable with a link to all cpp files to compile
 set(SRC
-    src/main.c
-    src/file_browser.c
-    src/file_reader.c
-    src/utils.c
-    src/project_handler.c
-    src/terminal_emulator.c
+    ${PROJECT_SOURCE_DIR}/src/main.c
+    ${PROJECT_SOURCE_DIR}/src/file_tree_view.c
+    ${PROJECT_SOURCE_DIR}/src/notebook.c
+    ${PROJECT_SOURCE_DIR}/src/utils.c
+    ${PROJECT_SOURCE_DIR}/src/project_handler.c
+    ${PROJECT_SOURCE_DIR}/src/terminal_emulator.c
 )
 
 if(WIN32)
@@ -18,8 +18,9 @@ if(WIN32)
 endif(WIN32)
 
 find_package(PkgConfig REQUIRED)
+
 if(PKG_CONFIG_FOUND)
-message(STATUS "Pkg config found")
+    message(STATUS "Pkg config found")
 endif 	(PKG_CONFIG_FOUND )
 
 #GTK packages
@@ -46,7 +47,7 @@ add_executable(${PROJECT_NAME} ${SRC})
 
 #link .h files
 target_include_directories(${PROJECT_NAME}
-    PRIVATE
+    PUBLIC
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/glade
         ${PROJECT_SOURCE_DIR}/css

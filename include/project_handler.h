@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <glib.h>
 #include <string.h>
 #include <sys/stat.h>
 

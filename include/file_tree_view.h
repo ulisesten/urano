@@ -1,7 +1,7 @@
 #ifndef __FILE_BROWSER__
 #define __FILE_BROWSER__
 
-#include "file_reader.h"
+#include "notebook.h"
 #include "utils.h"
 
 #include <stdio.h>
