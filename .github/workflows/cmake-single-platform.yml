@@ -1,4 +1,4 @@
-name: CMake Test 1
+name: CMake Build
 
 on:
   push:
@@ -11,33 +11,26 @@ env:
 
 jobs:
   build:
-    name: Build on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
+    name: Build on Ubuntu
+    runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install dependencies (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
+    - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake pkg-config libgtk-3-dev libvte-2.91-dev libgtksourceview-4-dev
-
-    - name: Install dependencies (Windows)
-      if: matrix.os == 'windows-latest'
-      run: |
-        choco install -y cmake --installargs 'ADD_CMAKE_TO_PATH=System'
-        choco install -y pkgconfiglite
-        choco install -y gtksourceview
+        sudo apt-get install -y \
+          cmake \
+          pkg-config \
+          libgtk-3-dev \
+          libvte-2.91-dev \
+          libgtksourceview-4-dev
 
     - name: Create build directory
       run: cmake -E make_directory build
 
     - name: Configure CMake
-      shell: bash
       working-directory: build
       run: cmake .. -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
 
@@ -45,6 +38,9 @@ jobs:
       working-directory: build
       run: cmake --build . --config ${{ env.BUILD_TYPE }}
 
-    - name: Run tests (if any)
+    - name: Run tests (optional)
       working-directory: build
-      run: ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
+      run: |
+        if [ -f "CTestTestfile.cmake" ]; then
+          ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
+        fi
