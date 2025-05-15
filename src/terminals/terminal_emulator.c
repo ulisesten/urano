@@ -28,7 +28,7 @@ void create_terminal(GtkWidget* container, char* project_path){
         child_ready,  /* callback */
         NULL);        /* user_data */
 
-    vte_terminal_set_size ((VteTerminal *)terminal, 512, 5);
+    vte_terminal_set_size ((VteTerminal *)terminal, 512, 8);
 
 
     gdk_rgba_parse (&foreground, "#babdb6");

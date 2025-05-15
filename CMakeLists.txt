@@ -5,12 +5,12 @@ project(urano)
 
 #create a src variable with a link to all cpp files to compile
 set(SRC
+    ${PROJECT_SOURCE_DIR}/src/functions/functions.c
+    ${PROJECT_SOURCE_DIR}/src/functions/utils.c
+    ${PROJECT_SOURCE_DIR}/src/treeviews/file_tree_view.c
+    ${PROJECT_SOURCE_DIR}/src/notebooks/notebook.c
+    ${PROJECT_SOURCE_DIR}/src/terminals/terminal_emulator.c
     ${PROJECT_SOURCE_DIR}/src/main.c
-    ${PROJECT_SOURCE_DIR}/src/file_tree_view.c
-    ${PROJECT_SOURCE_DIR}/src/notebook.c
-    ${PROJECT_SOURCE_DIR}/src/utils.c
-    ${PROJECT_SOURCE_DIR}/src/project_handler.c
-    ${PROJECT_SOURCE_DIR}/src/terminal_emulator.c
 )
 
 if(WIN32)
@@ -48,10 +48,14 @@ add_executable(${PROJECT_NAME} ${SRC})
 #link .h files
 target_include_directories(${PROJECT_NAME}
     PUBLIC
-        ${PROJECT_SOURCE_DIR}/include
+        #${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/glade
         ${PROJECT_SOURCE_DIR}/css
         ${PROJECT_SOURCE_DIR}/assets
+        ${PROJECT_SOURCE_DIR}/src/functions
+        ${PROJECT_SOURCE_DIR}/src/treeviews
+        ${PROJECT_SOURCE_DIR}/src/notebooks
+        ${PROJECT_SOURCE_DIR}/src/terminals
 )
 
 #link libs

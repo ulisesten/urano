@@ -1,5 +1,7 @@
 #include "project_handler.h"
 
+/// Unused
+
 char* get_project_path() {
     FILE *fptr = NULL;
     char* project_path;

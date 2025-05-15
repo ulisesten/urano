@@ -7,8 +7,13 @@
 #include <gtksourceview/gtksource.h>
 #include <stdbool.h>
 
+enum NOTEBOOK_ERRORS {
+    CANNOT_READ_FILE = -1,
+    CANNOT_LOAD_CONTENTS
+};
+
 GtkWidget* create_notebook();
-void       set_notebook(             GtkWidget*         notebook,     const char*    filename,    const char*  path);
+int        set_notebook(             GtkWidget*         notebook,     const char*    filename,    const char*  path);
 //void       on_save_button_clicked(   GtkTextBuffer*     buffer,       gpointer       user_data);
 GtkWidget* create_tab(               const gchar*       title,        GtkNotebook*   notebook,    GtkWidget*   scrolled);
 void       close_tab (               GtkButton*         button,       gpointer       user_data);
