@@ -26,9 +26,7 @@ void set_notebook(GtkWidget* notebook, const char* file_name, const char* path_n
     char             location[1024];
     bool             contents_loaded = false;
 
-    strcpy(location, path_name);
-    strcat(location,"/");
-    strcat(location,file_name);
+    snprintf(location, sizeof(location), "%s/%s", path_name, file_name);
 
     file = g_file_new_for_path(location);
     
