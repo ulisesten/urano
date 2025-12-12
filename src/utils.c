@@ -21,9 +21,7 @@ int filling_list(PATH* paths, char* file_name){
             if (entry->d_name[0] == '.')
                 continue;
 
-            strcpy(path, file_name);
-            strcat(path, "/");
-            strcat(path, entry->d_name);
+            snprintf(path, sizeof(path), "%s/%s", file_name, entry->d_name);
 
             //printf("entry: %s\n", path);
 
